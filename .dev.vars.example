@@ -1,0 +1,8 @@
+# Pages Functions only. Never prefix Gemini secrets with VITE_.
+# Keep disabled until ALL accounts are verified to use unbilled free plans.
+FREE_TIER_CONFIRMED=false
+GEMINI_API_KEY=
+# Choose a currently available free-tier text model in Google AI Studio.
+GEMINI_MODEL=
+SUPABASE_URL=
+SUPABASE_ANON_KEY=
