@@ -7,8 +7,8 @@ export const subjects = [
  {id:'engineering',name:'공학수학',category:'공학 기초',symbol:'∂',color:'mint',description:'수학 도구로 공학 문제를 풀어봐요.',steps:['일계 미분방정식의 해법 익히기','이계 선형 미분방정식과 응용 이해하기','라플라스 변환으로 방정식 풀어보기','푸리에 급수와 편미분방정식 살펴보기'],queries:['공학수학 일계 이계 미분방정식 기초','공학수학 라플라스 변환 강의','푸리에 급수 편미분방정식 기초'],lesson:'미분방정식의 기본 개념'}
 ];
 export const youtubeUrl = q => `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
-export const resources = subjects.flatMap(s=>s.queries.map((q,i)=>({id:`${s.id}-${i}`,subject:s.id,title:q,tag:i===0?'개념 입문':i===1?'이해 넓히기':'한 걸음 더',color:s.color,symbol:s.symbol,url:youtubeUrl(q)})));
+export const resources = subjects.flatMap(s=>s.queries.map((q,i)=>({id:`${s.id}-${i}`,subject:s.id,title:q,tag:i===0?'개념 입문':i===1?'이해 넓히기':'심화 학습',color:s.color,symbol:s.symbol,url:youtubeUrl(q)})));
 export function demoReply(subject, message, confirmed) {
- if (!confirmed) return `${subject.name}을 함께 공부해 봐요. “${message.slice(0,100)}”라는 고민을 확인했어요.\n\n먼저 ${subject.lesson}부터 살펴보는 건 어떨까요? 지금 단계에서는 학습 수준을 단정할 수 없어요. 아래에서 현재 이해도에 가까운 항목을 골라주세요.\n\n이 응답은 연결 전 체험을 위한 예시이며, 실제 질문 분석은 AI 연결 후 제공됩니다.`;
- return `${subject.name}의 ${confirmed} 단계를 선택하셨네요. 지금은 “${subject.steps[0]}”부터 시작하는 예시 계획을 제안해요.\n\n① 핵심 개념을 읽고 자신의 말로 설명해 보세요.\n② 작은 예제 하나를 직접 풀어 보세요.\n③ 막힌 부분을 적고 관련 강의를 찾아보세요.\n\n옆의 로드맵에서 순서를 확인할 수 있어요. 속도보다 오늘 이해한 한 가지가 더 중요해요.\n\n체험용 예시 응답입니다. 자유로운 질문에 대한 실제 답변은 Gemini 연결 후 받을 수 있어요.`;
+ if (!confirmed) return `${subject.name} 질문: “${message.slice(0,100)}”\n\n현재 이해도를 선택하면 ${subject.lesson}을 포함한 예시 학습 순서를 확인할 수 있습니다.\n\n이 응답은 연결 전 체험을 위한 예시이며, 실제 질문 분석은 AI 연결 후 제공됩니다.`;
+ return `${subject.name}의 ${confirmed} 단계를 선택하셨네요. 지금은 “${subject.steps[0]}”부터 시작하는 예시 계획을 제안해요.\n\n① 핵심 개념을 읽고 자신의 말로 설명해 보세요.\n② 작은 예제 하나를 직접 풀어 보세요.\n③ 막힌 부분을 적고 관련 강의를 찾아보세요.\n\n상단의 로드맵 메뉴에서 순서를 확인할 수 있습니다.\n\n체험용 예시 응답입니다. 자유로운 질문에 대한 실제 답변은 Gemini 연결 후 받을 수 있어요.`;
 }
