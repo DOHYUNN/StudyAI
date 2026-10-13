@@ -14,6 +14,7 @@ npm run dev
 ## 현재 구현
 
 - 반응형 학습 홈, 6개 기초 과목(일반 물리·일반 화학·일반 생물·미분적분학·선형대수·공학수학), 과목별 코칭 대화
+- PDF·JPG·PNG 첨부(파일당 2 MB, 최대 3개), 미리보기·취소, 파일만 보내기
 - 학생이 이해도를 확인하는 단계, 단계별 로드맵 체크
 - YouTube 주제 검색 링크, 자료 검색·필터·저장
 - 학습 목표 편집, 브라우저 로컬 저장
@@ -68,3 +69,15 @@ Pages 서버 환경 변수(Secrets)에 `GEMINI_API_KEY`, `GEMINI_MODEL`, `SUPABA
 - https://supabase.com/docs/guides/database/postgres/row-level-security
 - https://supabase.com/docs/guides/auth/auth-anonymous
 - https://ai.google.dev/gemini-api/docs/pricing
+
+## 채팅 파일 첨부
+
+채팅 입력창의 `파일 첨부` 버튼으로 PDF/JPG/PNG를 선택합니다. 원본은 파일당 2 MB, 합계 6 MB, 한 번에 3개까지입니다. 확장자와 실제 파일 헤더를 브라우저와 서버에서 확인합니다. 파일만 보내면 기본 분석 질문을 함께 전달합니다.
+
+- 데모: 첨부/미리보기/취소를 체험하며 내용은 분석하지 않습니다.
+- AI 연결: 질문과 원본 파일을 Pages Function을 통해 Gemini에 전송합니다. 무료 한도 오류 시 중단합니다. 선택한 모델이 PDF·이미지 입력을 지원해야 합니다.
+- 현재 페이지에서 해당 과목의 가장 최근 첨부 묶음을 후속 대화에 사용합니다(최근 8개 메시지 범위). 새 묶음 전송 시 이전 묶음을 대체합니다.
+- 파일 원본은 브라우저 메모리에만 임시 유지하고 Supabase/로컬 저장에는 파일명, 형식, 크기만 기록합니다. 새로고침 후에는 재첨부해야 합니다. Google에 전송된 자료에는 해당 서비스의 데이터 처리 정책이 적용됩니다.
+- PDF 페이지 수, 암호화, 손상 여부는 별도로 파싱하지 않습니다. 읽을 수 없는 문서는 AI 요청 시 오류가 발생할 수 있습니다.
+
+Google 문서: https://ai.google.dev/gemini-api/docs/document-processing
