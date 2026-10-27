@@ -1,0 +1,17 @@
+import React,{useState} from 'react';
+import {ChevronLeft,ChevronRight,Check} from 'lucide-react';
+import {completed,schoolDate,shiftMonth,monthDays,groupDeadlines} from './learning';
+const weekdays=['일','월','화','수','목','금','토'];
+export default function AssignmentCalendar({items,courses,renderAssignment}){
+ const today=schoolDate(),[month,setMonth]=useState(today.slice(0,7)),[selected,setSelected]=useState(today);
+ const groups=groupDeadlines(items),chosen=groups[selected]||[],monthCount=items.filter(a=>a.dueAt&&schoolDate(a.dueAt).startsWith(month)).length;
+ const color=a=>`course-color-${Math.max(0,courses.findIndex(c=>c.id===a.courseId))%6}`;
+ function move(delta){const next=shiftMonth(month,delta);setMonth(next);setSelected(next===today.slice(0,7)?today:`${next}-01`)}
+ const dateTitle=selected==='undated'?'마감일 없는 과제':`${Number(selected.slice(5,7))}월 ${Number(selected.slice(8,10))}일`;
+ return <div className="assignment-calendar">
+  <div className="calendar-toolbar"><div><h2>{Number(month.slice(0,4))}년 {Number(month.slice(5))}월</h2><p>이번 달 과제 {monthCount}개 · 한국 시간 기준</p></div><div className="calendar-controls"><button className="secondary" onClick={()=>{setMonth(today.slice(0,7));setSelected(today)}}>오늘</button><button className="icon-button" aria-label="이전 달" onClick={()=>move(-1)}><ChevronLeft size={19}/></button><button className="icon-button" aria-label="다음 달" onClick={()=>move(1)}><ChevronRight size={19}/></button></div></div>
+  <div className="calendar-layout"><div className="calendar-month"><div className="calendar-weekdays">{weekdays.map((d,i)=><span key={d} className={i===0?'sunday':i===6?'saturday':''}>{d}</span>)}</div><div className="calendar-days">{monthDays(month).map((d,i)=>{const tasks=groups[d.key]||[];return <button key={d.key} type="button" className={`calendar-day ${!d.inMonth?'outside':''} ${d.key===selected?'selected':''} ${d.key===today?'today':''} ${i%7===0?'sunday':i%7===6?'saturday':''}`} aria-label={`${d.key}, 과제 ${tasks.length}개${d.key===today?', 오늘':''}`} aria-pressed={d.key===selected} onClick={()=>{setSelected(d.key);if(!d.inMonth)setMonth(d.key.slice(0,7))}}><span className="calendar-day-number">{d.day}</span><span className="calendar-events">{tasks.slice(0,3).map(a=><span key={`${a.courseId}-${a.id}`} className={`calendar-event ${color(a)} ${completed(a)?'complete':''}`} title={`${a.courseName} · ${a.name}`}><span className="calendar-event-dot"/>{completed(a)&&<Check size={10}/>}<span>{a.name}</span></span>)}{tasks.length>3&&<span className="calendar-more">+{tasks.length-3}개 더</span>}</span>{tasks.length>0&&<span className="calendar-mobile-count">{tasks.length}개</span>}</button>})}</div><div className="calendar-legend">{courses.map((c,i)=><span key={c.id} className={`course-color-${i%6}`}><i/>{c.name}</span>)}</div><button className={`calendar-undated ${selected==='undated'?'active':''}`} aria-pressed={selected==='undated'} onClick={()=>setSelected('undated')}>마감일 없는 과제 <strong>{groups.undated.length}</strong></button></div>
+   <aside className="calendar-agenda" aria-label="선택한 날짜의 과제"><div className="calendar-agenda-heading"><div><p>{selected===today?'TODAY':'ASSIGNMENTS'}</p><h3>{dateTitle}</h3></div><span>{chosen.length}개</span></div><div className="assignment-list">{chosen.map(renderAssignment)}{!chosen.length&&<div className="calendar-empty">{selected==='undated'?'마감일 없는 과제가 없습니다.':'이 날짜에 마감하는 과제가 없습니다.'}</div>}</div></aside>
+  </div>
+ </div>
+}

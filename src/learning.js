@@ -14,3 +14,15 @@ export function visibleAssignments(items,{course='all',status='all',query='',sor
   return (av!==null&&bv!==null?(sort==='recent'?bv-av:av-bv):0)||a.courseName.localeCompare(b.courseName,'ko')||a.name.localeCompare(b.name,'ko');
  });
 }
+
+// Calendar boundaries always follow the school's Asia/Seoul time zone.
+export function schoolDate(value=new Date()){
+ const parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date(value));
+ const get=t=>parts.find(p=>p.type===t).value;return `${get('year')}-${get('month')}-${get('day')}`;
+}
+export function shiftMonth(month,delta){const [y,m]=month.split('-').map(Number),d=new Date(Date.UTC(y,m-1+delta,1));return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}`}
+export function monthDays(month){
+ const [y,m]=month.split('-').map(Number),first=new Date(Date.UTC(y,m-1,1)),offset=first.getUTCDay(),count=new Date(Date.UTC(y,m,0)).getUTCDate();
+ return Array.from({length:Math.ceil((offset+count)/7)*7},(_,i)=>{const d=new Date(Date.UTC(y,m-1,1-offset+i));const key=d.toISOString().slice(0,10);return {key,day:d.getUTCDate(),inMonth:key.startsWith(month)}});
+}
+export function groupDeadlines(items){const groups={undated:[]};for(const a of items){const key=a.dueAt?schoolDate(a.dueAt):'undated';(groups[key]??=[]).push(a)}return groups}

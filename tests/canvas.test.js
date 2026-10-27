@@ -41,3 +41,16 @@ test('filters include done assignments and sort undated items last',()=>{
  const items=[{name:'a',courseId:'1',courseName:'A',status:'submitted',dueAt:null},{name:'b',courseId:'1',courseName:'A',status:'unsubmitted',dueAt:'2026-11-01T00:00:00Z'}];
  assert.equal(visibleAssignments(items)[0].name,'b');assert.equal(visibleAssignments(items,{status:'complete'}).length,1);assert.equal(visibleAssignments(items,{status:'pending',query:'b'}).length,1);assert.equal(deadlineLabel(items[0]),null);
 });
+
+test('calendar uses Seoul due dates across midnight and groups undated tasks',async()=>{
+ const {schoolDate,groupDeadlines}=await import('../src/learning.js');
+ assert.equal(schoolDate('2026-10-27T15:00:00Z'),'2026-10-28');
+ assert.equal(schoolDate('2026-10-27T14:59:59Z'),'2026-10-27');
+ const items=[{id:'a',dueAt:'2026-10-27T15:00:00Z'},{id:'b',dueAt:null}];
+ const grouped=groupDeadlines(items);assert.equal(grouped['2026-10-28'][0].id,'a');assert.equal(grouped.undated[0].id,'b');
+});
+test('month grid handles leap years, week alignment and year rollover',async()=>{
+ const {monthDays,shiftMonth}=await import('../src/learning.js');
+ const feb=monthDays('2024-02');assert.equal(feb.filter(d=>d.inMonth).length,29);assert.equal(feb[0].key,'2024-01-28');assert.equal(feb.length%7,0);
+ assert.equal(monthDays('2026-08').length,42);assert.equal(shiftMonth('2026-12',1),'2027-01');assert.equal(shiftMonth('2026-01',-1),'2025-12');
+});
