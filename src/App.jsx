@@ -1,7 +1,7 @@
 import React, {useState,useEffect,useRef} from 'react';
 import {BookOpen,MessageCircle,Route,Play,Bookmark,Settings,ArrowUpRight,ArrowRight,ArrowUp,Check,Sparkles,Target,X,Search,Cloud,Paperclip,FileText} from 'lucide-react';
 import {subjects,resources,demoReply} from './data';
-import {readState,supabase,session,saveCloud,loadCloud} from './storage';
+import {readState,persistState,supabase,session,saveCloud,loadCloud} from './storage';
 import ChatVerification from './ChatVerification';
 import {prepareFiles} from './attachments';
 import {formatSize} from '../shared/attachments';
@@ -17,16 +17,16 @@ function Icon({name:Comp,...props}) {return <Comp size={20} strokeWidth={1.7} {.
 export default function App(){
  const [page,setPage]=useState('coach'),[selected,setSelected]=useState(subjects.some(s=>s.id===initial.selected)?initial.selected:subjects[0].id);
  const [progress,setProgress]=useState(initial.progress||{}),[saved,setSaved]=useState(Array.isArray(initial.saved)?initial.saved.filter(id=>resources.some(r=>r.id===id)):[]),[goal,setGoal]=useState(initial.goal||'매일 20분 공부하기');
- const [messages,setMessages]=useState(Array.isArray(initial.messages)?initial.messages:[]),[level,setLevel]=useState(initial.level||{}),[input,setInput]=useState(''),[busy,setBusy]=useState(false),[notice,setNotice]=useState(''),[modal,setModal]=useState(false),[goalDraft,setGoalDraft]=useState(''),[query,setQuery]=useState(''),[filter,setFilter]=useState('all'),[live,setLive]=useState(false),[cloudBusy,setCloudBusy]=useState(false);
+ const [messages,setMessages]=useState([]),[level,setLevel]=useState({}),[input,setInput]=useState(''),[busy,setBusy]=useState(false),[notice,setNotice]=useState(''),[modal,setModal]=useState(false),[goalDraft,setGoalDraft]=useState(''),[query,setQuery]=useState(''),[filter,setFilter]=useState('all'),[live,setLive]=useState(false),[cloudBusy,setCloudBusy]=useState(false);
  const [connectionHealth,setConnectionHealth]=useState('unknown');
  const [checkingConnection,setCheckingConnection]=useState(false),[connectionCheck,setConnectionCheck]=useState('');
  const [verificationToken,setVerificationToken]=useState(''),[verificationReset,setVerificationReset]=useState(0);
  const [connection,setConnection]=useState({enabled:false,authMode:null,authenticated:false}),[accessCode,setAccessCode]=useState(''),[accessBusy,setAccessBusy]=useState(false);
  const [attachments,setAttachments]=useState([]),[fileReading,setFileReading]=useState(false),[previewFile,setPreviewFile]=useState(null);
- const fileInput=useRef(null),fileReadingRef=useRef(false),fileSessions=useRef(new Map());
+ const fileInput=useRef(null),fileReadingRef=useRef(false),fileSessions=useRef(new Map()),conversationVersion=useRef(0),chatRequest=useRef(null);
  const end=useRef(null),sending=useRef(false),subject=subjects.find(s=>s.id===selected),steps=subject.steps,done=progress[selected]||[],chat=messages.filter(m=>m.subject===selected);
- const state={selected,progress,saved,goal,messages,level};
- useEffect(()=>{try{localStorage.setItem('studyai-v1',JSON.stringify(state))}catch{setNotice('브라우저 저장 공간이 부족해 변경 사항을 저장하지 못했어요.')}},[selected,progress,saved,goal,messages,level]);
+ const state={selected,progress,saved,goal};
+ useEffect(()=>{if(!persistState(state))setNotice('학습 설정을 브라우저에 저장하지 못했습니다.')},[selected,progress,saved,goal]);
  async function refreshConnection(){const res=await fetch('/api/config',{cache:'no-store'});if(!res.ok)return;const v=await res.json();setConnection(v);if(v.error)setNotice(v.error);setLive(v.enabled===true&&(v.authMode==='turnstile'?true:v.authMode==='access-code'?v.authenticated:!!supabase))}
  useEffect(()=>{refreshConnection().catch(()=>{});},[]);
  async function unlock(event){event.preventDefault();if(accessBusy)return;setAccessBusy(true);try{const res=await fetch('/api/access',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:accessCode})});const data=await res.json();if(!res.ok)throw new Error(data.error);setAccessCode('');await refreshConnection();setNotice('AI 채팅 접속을 허용했습니다.')}catch(e){setNotice(e.message||'접속을 확인해 주세요.')}finally{setAccessBusy(false)}}
@@ -36,19 +36,33 @@ export default function App(){
  useEffect(()=>{if(notice){const t=setTimeout(()=>setNotice(''),5000);return()=>clearTimeout(t)}},[notice]);
  useEffect(()=>{if(page==='coach')end.current?.scrollIntoView({behavior:'smooth',block:'nearest'})},[messages,busy,page]);
  function go(p){setPage(p)}
+ function newConversation(){
+  conversationVersion.current+=1;chatRequest.current?.abort();chatRequest.current=null;
+  sending.current=false;fileReadingRef.current=false;fileSessions.current.clear();
+  setMessages([]);setLevel({});setInput('');setAttachments([]);setPreviewFile(null);setBusy(false);setFileReading(false);setNotice('');setModal(false);
+  if(fileInput.current)fileInput.current.value='';
+  setVerificationToken('');setVerificationReset(n=>n+1);setPage('coach');
+  window.scrollTo(0,0);
+ }
+ useEffect(()=>{
+  const leave=()=>newConversation();const restore=event=>{if(event.persisted)newConversation()};
+  window.addEventListener('pagehide',leave);window.addEventListener('pageshow',restore);
+  return()=>{window.removeEventListener('pagehide',leave);window.removeEventListener('pageshow',restore);chatRequest.current?.abort()};
+ },[]);
  function toggleStep(i){setProgress(p=>({...p,[selected]:(p[selected]||[]).includes(i)?p[selected].filter(x=>x!==i):[...(p[selected]||[]),i]}))}
  function toggleSave(id){setSaved(s=>s.includes(id)?s.filter(x=>x!==id):[...s,id])}
  async function addFiles(event){
   const files=Array.from(event.target.files||[]);event.target.value='';
   if(!files.length || fileReadingRef.current || sending.current)return;
-  fileReadingRef.current=true;setFileReading(true);
-  try{setAttachments(await prepareFiles(files,attachments))}catch(e){setNotice(e.message)}finally{fileReadingRef.current=false;setFileReading(false)}
+  const version=conversationVersion.current;fileReadingRef.current=true;setFileReading(true);
+  try{const prepared=await prepareFiles(files,attachments);if(version===conversationVersion.current)setAttachments(prepared)}catch(e){if(version===conversationVersion.current)setNotice(e.message)}finally{if(version===conversationVersion.current){fileReadingRef.current=false;setFileReading(false)}}
  }
  async function send(text=input,confirmed=level[selected]){
   if(sending.current||fileReadingRef.current||(!text.trim()&&!attachments.length))return;
   if(connectionHealth==='error'){setNotice('설정에서 AI 연결을 다시 확인해 주세요.');return;}
   if(connection.enabled&&!live){setNotice('접속 암호를 먼저 입력해 주세요.');return;}
   if(live&&connection.authMode==='turnstile'&&!verificationToken){setNotice('사용자 확인 중입니다. 잠시 후 다시 시도해 주세요.');return;}
+  const version=conversationVersion.current,controller=new AbortController();chatRequest.current=controller;
   const turnstileToken=verificationToken;
   const topic=subject,history=chat.slice(-8),files=attachments;
   const question=text.trim()||'첨부 자료의 핵심 내용을 설명하고, 이 과목을 공부할 순서를 제안해 줘.';
@@ -61,19 +75,21 @@ export default function App(){
    if(live){
     const currentFiles=fileSessions.current.get(topic.id);
     const payload=[...history,user].map(m=>({role:m.role,text:m.text,...(currentFiles?.messageId===m.id?{attachments:currentFiles.files.map(({name,size,mimeType,data})=>({name,size,mimeType,data}))}:{})}));
-    const auth=connection.authMode==='supabase'?await session():null;const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json',...(auth?{Authorization:`Bearer ${auth.access_token}`}:{ }),...(connection.authMode==='turnstile'?{'X-StudyAI-Turnstile':turnstileToken}:{})},body:JSON.stringify({subject:topic.name,level:confirmed||null,messages:payload}),signal:AbortSignal.timeout(45000)});
+    const auth=connection.authMode==='supabase'?await session():null;const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json',...(auth?{Authorization:`Bearer ${auth.access_token}`}:{ }),...(connection.authMode==='turnstile'?{'X-StudyAI-Turnstile':turnstileToken}:{})},body:JSON.stringify({subject:topic.name,level:confirmed||null,messages:payload}),signal:AbortSignal.any([controller.signal,AbortSignal.timeout(45000)])});
     const data=await res.json();if(!res.ok){if(res.status===401)await refreshConnection();throw new Error(data.error||'답변을 받지 못했어요. 잠시 후 다시 시도해 주세요.')}answer=data.reply;
    } else {
     await new Promise(r=>setTimeout(r,650));
     answer=files.length?`${files.map(f=>f.name).join(', ')} 파일 ${files.length}개를 첨부했어요.\n\n현재는 데모 모드라 파일 내용을 읽거나 분석하지 않았습니다. ChatKHU 연결 후 첨부한 강의 자료나 문제 사진을 바탕으로 설명과 학습 코칭을 받을 수 있어요.`:demoReply(topic,question,confirmed);
    }
+   if(version!==conversationVersion.current)return;
    setMessages(m=>[...m,{id:crypto.randomUUID(),role:'assistant',text:answer,subject:topic.id}].slice(-100));
   }catch(e){
+   if(version!==conversationVersion.current||controller.signal.aborted)return;
    if(files.length){setAttachments(files);if(previousFiles)fileSessions.current.set(topic.id,previousFiles);else fileSessions.current.delete(topic.id)}
    setNotice(e.name==='TimeoutError'?'응답 시간이 초과됐어요. 잠시 후 다시 시도해 주세요.':e.message);
-  }finally{if(connection.authMode==='turnstile'){setVerificationToken('');setVerificationReset(n=>n+1)}setBusy(false);sending.current=false}
+  }finally{if(version===conversationVersion.current){chatRequest.current=null;if(connection.authMode==='turnstile'){setVerificationToken('');setVerificationReset(n=>n+1)}setBusy(false);sending.current=false}}
  }
- async function cloudAction(load=false){setCloudBusy(true);try{if(load){const d=await loadCloud();if(!d){setNotice('저장된 클라우드 기록이 없어요.');return}if(d.progress)setProgress(d.progress);if(Array.isArray(d.saved))setSaved(d.saved);if(typeof d.goal==='string')setGoal(d.goal);if(Array.isArray(d.messages))setMessages(d.messages);if(d.level)setLevel(d.level);setNotice('클라우드 기록을 불러왔어요.')}else{await saveCloud(state);setNotice('Supabase에 학습 기록을 저장했어요.')}}catch{setNotice('클라우드 연결을 확인해 주세요. Supabase 설정, 익명 로그인 및 테이블 준비가 필요해요.')}finally{setCloudBusy(false)}}
+ async function cloudAction(load=false){setCloudBusy(true);try{if(load){const d=await loadCloud();if(!d){setNotice('저장된 클라우드 기록이 없어요.');return}if(d.progress)setProgress(d.progress);if(Array.isArray(d.saved))setSaved(d.saved);if(typeof d.goal==='string')setGoal(d.goal);setNotice('클라우드 기록을 불러왔어요.')}else{await saveCloud(state);setNotice('Supabase에 학습 기록을 저장했어요.')}}catch{setNotice('클라우드 연결을 확인해 주세요. Supabase 설정, 익명 로그인 및 테이블 준비가 필요해요.')}finally{setCloudBusy(false)}}
 
  function ResourceCard({r}){return <article className="resource"><span className="resource-icon"><Play size={20}/></span><div className="resource-body"><small>{subjects.find(s=>s.id===r.subject).name} · {r.tag}</small><a href={r.url} target="_blank" rel="noreferrer" className="resource-title">{r.title}<ArrowUpRight size={16}/></a><span className="resource-source">YouTube 검색</span></div><button className={`icon-button ${saved.includes(r.id)?'bookmarked':''}`} aria-label={saved.includes(r.id)?`${r.title} 저장 취소`:`${r.title} 저장`} onClick={()=>toggleSave(r.id)}><Bookmark size={18} fill={saved.includes(r.id)?'currentColor':'none'}/></button></article>}
  function Composer(){return <form className="composer" onSubmit={e=>{e.preventDefault();send()}}>
@@ -85,7 +101,7 @@ export default function App(){
  </form>}
  return <div className="app">
  <header className="topbar">
-  <a className="brand" href="#" onClick={e=>{e.preventDefault();go('coach')}}><span className="brand-icon"><BookOpen size={23}/></span>Study<span className="brand-ai">AI</span></a>
+  <a className="brand" href="#" aria-label="StudyAI 새 대화 시작" title="새 대화 시작" onClick={e=>{e.preventDefault();newConversation()}}><span className="brand-icon"><BookOpen size={23}/></span>Study<span className="brand-ai">AI</span></a>
   <nav aria-label="주 메뉴">{navs.map(([id,label,I])=><button key={id} className={page===id?'active':''} aria-current={page===id?'page':undefined} onClick={()=>go(id)}><Icon name={I} size={17}/>{label}{id==='saved'&&saved.length>0&&<span className="count">{saved.length}</span>}</button>)}</nav>
   <div className="topbar-right"><span className="mode-label"><span className="status-dot"/>{live?(connectionHealth==='verified'?'AI 연결 확인됨':connectionHealth==='error'?'AI 연결 확인 필요':'ChatKHU 설정됨'):connection.enabled?'접속 암호 필요':'연결 설정 대기'}</span><button className={`icon-button settings-button ${page==='settings'?'active':''}`} onClick={()=>go('settings')} aria-label="설정"><Settings size={20}/></button></div>
  </header>
@@ -100,7 +116,7 @@ export default function App(){
  </section>}
  {page==='roadmap'&&<><div className="subject-tabs">{subjects.map(s=><button key={s.id} className={selected===s.id?'selected':''} onClick={()=>setSelected(s.id)}>{s.name}</button>)}</div><div className="roadmap-banner"><div><span className="eyebrow">MY LEARNING ROADMAP</span><h2>{subject.name}, 기초 학습 순서</h2><p>입문용 예시 계획입니다. AI 코치와 대화하며 자신에게 맞는 학습 순서를 찾아보세요.</p></div><div className="progress-ring" style={{'--progress':`${done.length*25}%`}}><span>{done.length*25}<small>%</small></span></div></div><div className="roadmap-list">{steps.map((s,i)=><article key={s} className={done.includes(i)?'finished':''}><button className="step-checkbox" aria-label={`${s} ${done.includes(i)?'완료 취소':'완료'}`} onClick={()=>toggleStep(i)}>{done.includes(i)?<Check size={20}/>:String(i+1).padStart(2,'0')}</button><div><span className="eyebrow">STEP 0{i+1} · {done.includes(i)?'학습 완료':'학습 전'}</span><h3>{s}</h3><p>개념을 살펴보고, 작은 예제를 풀고, 자신의 말로 설명해 보세요.</p></div><button className="text-button" onClick={()=>send(`${s} 학습을 도와줘`)}>채팅으로 질문 <ArrowUpRight size={16}/></button></article>)}</div></>}
  {(page==='library'||page==='saved')&&<><div className="library-toolbar"><div className="subject-tabs"><button className={filter==='all'?'selected':''} onClick={()=>setFilter('all')}>전체 과목</button>{subjects.map(s=><button key={s.id} className={filter===s.id?'selected':''} onClick={()=>setFilter(s.id)}>{s.name}</button>)}</div><label className="search"><Search size={17}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="자료 검색" aria-label="자료 검색"/></label></div><p className="resource-note">직접 재생하는 영상 목록이 아닌, 주제별 YouTube 강의 검색 모음입니다.</p><div className="resource-grid">{resources.filter(r=>(page!=='saved'||saved.includes(r.id))&&(filter==='all'||r.subject===filter)&&r.title.includes(query)).map(r=><ResourceCard key={r.id} r={r}/>)}</div>{!resources.some(r=>(page!=='saved'||saved.includes(r.id))&&(filter==='all'||r.subject===filter)&&r.title.includes(query))&&<div className="empty-state"><Bookmark size={35}/><h2>{page==='saved'?'아직 저장한 자료가 없어요':'검색 결과가 없어요'}</h2><p>다른 과목을 선택하거나 관심 있는 자료의 책갈피를 눌러보세요.</p><button className="primary" onClick={()=>{setFilter('all');setQuery('');go('library')}}>학습 자료 둘러보기 <ArrowRight size={16}/></button></div>}</>}
- {page==='settings'&&<div className="settings-grid"><section className="settings-card"><Target/><h2>나의 학습 목표</h2><p>{goal}</p><button className="primary" onClick={()=>{setGoalDraft(goal);setModal(true)}}>목표 수정하기</button></section><section className="settings-card"><Cloud/><h2>학습 기록 보관</h2><p>진도와 저장한 자료, 대화는 이 브라우저에 자동 저장됩니다. Supabase 연결 후에는 클라우드에 수동으로 보관할 수 있어요.</p><div className="connection-state">{supabase?'Supabase 연결 정보 설정됨':'Supabase 연결 준비 중'}</div><div className="button-row"><button className="primary" disabled={!supabase||cloudBusy} onClick={()=>cloudAction()}>클라우드에 저장</button><button className="secondary" disabled={!supabase||cloudBusy} onClick={()=>cloudAction(true)}>불러오기</button></div><small>익명 계정은 현재 브라우저에서 유지됩니다. 다른 기기와의 동기화는 정식 로그인 연동 후 지원됩니다.</small></section><section className="settings-card"><Sparkles/><h2>AI 연결 상태</h2><p>{live?'ChatKHU 서버 설정이 적용되었습니다. 아래 버튼으로 키와 모델 권한을 확인할 수 있습니다. 학교 크레딧이나 사용 한도 오류가 발생하면 요청을 중단합니다.':'지금은 데모 체험 모드입니다. ChatKHU 연결 전에는 예시 응답으로 화면 흐름을 확인할 수 있어요.'}</p><span className="pill">{live?(connectionHealth==='verified'?'AI 연결 확인됨':connectionHealth==='error'?'AI 연결 확인 필요':'ChatKHU 설정됨'):'외부 AI 호출 없음'}</span>{connection.enabled&&connection.authMode==='turnstile'&&<div className="connection-check"><ChatVerification siteKey={connection.siteKey} reset={verificationReset} onToken={setVerificationToken}/><button className="secondary" disabled={!verificationToken||checkingConnection} onClick={checkConnection}>{checkingConnection?'확인 중…':'AI 연결 확인'}</button><small role="status">{connectionCheck||'키와 모델 목록만 확인하며 답변을 생성하지 않습니다.'}</small></div>}{connection.authMode==='access-code'&&connection.authenticated&&<button className="secondary" onClick={lockChat}>AI 접속 잠그기</button>}</section></div>}
+ {page==='settings'&&<div className="settings-grid"><section className="settings-card"><Target/><h2>나의 학습 목표</h2><p>{goal}</p><button className="primary" onClick={()=>{setGoalDraft(goal);setModal(true)}}>목표 수정하기</button></section><section className="settings-card"><Cloud/><h2>학습 기록 보관</h2><p>진도, 저장한 자료, 학습 목표만 브라우저에 저장합니다. 대화와 첨부 파일은 저장하지 않으며, 페이지를 나가거나 새로고침하면 초기화됩니다.</p><div className="connection-state">{supabase?'Supabase 연결 정보 설정됨':'Supabase 연결 준비 중'}</div><div className="button-row"><button className="primary" disabled={!supabase||cloudBusy} onClick={()=>cloudAction()}>클라우드에 저장</button><button className="secondary" disabled={!supabase||cloudBusy} onClick={()=>cloudAction(true)}>불러오기</button></div><small>익명 계정은 현재 브라우저에서 유지됩니다. 다른 기기와의 동기화는 정식 로그인 연동 후 지원됩니다.</small></section><section className="settings-card"><Sparkles/><h2>AI 연결 상태</h2><p>{live?'ChatKHU 서버 설정이 적용되었습니다. 아래 버튼으로 키와 모델 권한을 확인할 수 있습니다. 학교 크레딧이나 사용 한도 오류가 발생하면 요청을 중단합니다.':'지금은 데모 체험 모드입니다. ChatKHU 연결 전에는 예시 응답으로 화면 흐름을 확인할 수 있어요.'}</p><span className="pill">{live?(connectionHealth==='verified'?'AI 연결 확인됨':connectionHealth==='error'?'AI 연결 확인 필요':'ChatKHU 설정됨'):'외부 AI 호출 없음'}</span>{connection.enabled&&connection.authMode==='turnstile'&&<div className="connection-check"><ChatVerification siteKey={connection.siteKey} reset={verificationReset} onToken={setVerificationToken}/><button className="secondary" disabled={!verificationToken||checkingConnection} onClick={checkConnection}>{checkingConnection?'확인 중…':'AI 연결 확인'}</button><small role="status">{connectionCheck||'키와 모델 목록만 확인하며 답변을 생성하지 않습니다.'}</small></div>}{connection.authMode==='access-code'&&connection.authenticated&&<button className="secondary" onClick={lockChat}>AI 접속 잠그기</button>}</section></div>}
 
  </main>{previewFile&&<FilePreview file={previewFile} onClose={()=>setPreviewFile(null)}/ >}{notice&&<div className="toast" role="status">{notice}<button className="icon-button" onClick={()=>setNotice('')} aria-label="알림 닫기"><X size={16}/></button></div>}{modal&&<div className="modal-backdrop" onClick={()=>setModal(false)}><form role="dialog" aria-modal="true" aria-labelledby="goal-title" className="modal" onClick={e=>e.stopPropagation()} onSubmit={e=>{e.preventDefault();if(goalDraft.trim()){setGoal(goalDraft.trim());setModal(false);setNotice('새로운 학습 목표를 저장했어요.')}}}><button type="button" className="modal-close icon-button" onClick={()=>setModal(false)} aria-label="닫기"><X/></button><h2 id="goal-title">학습 목표 수정</h2><label htmlFor="goal">학습 목표</label><input id="goal" autoFocus value={goalDraft} onChange={e=>setGoalDraft(e.target.value)} maxLength={80} required onKeyDown={e=>{if(e.key==='Escape')setModal(false)}}/><button className="primary" type="submit">목표 저장하기 <Check size={17}/></button></form></div>}</div>
 }
