@@ -7,6 +7,6 @@ export function authMode(env) {
 export function chatkhuReady(env) {
  return env.CHATKHU_CREDITS_CONFIRMED === 'true'
   && typeof env.CHATKHU_API_KEY === 'string' && !!env.CHATKHU_API_KEY.trim()
-  && typeof env.CHATKHU_MODEL === 'string' && /^gemini-[a-zA-Z0-9._-]+$/.test(env.CHATKHU_MODEL)
+  && (env.CHATKHU_MODEL===undefined || env.CHATKHU_MODEL==='' || typeof env.CHATKHU_MODEL === 'string' && /^gemini-[a-zA-Z0-9._-]+$/.test(env.CHATKHU_MODEL))
   && !!authMode(env);
 }

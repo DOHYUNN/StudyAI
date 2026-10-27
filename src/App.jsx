@@ -23,7 +23,7 @@ export default function App(){
  const end=useRef(null),sending=useRef(false),subject=subjects.find(s=>s.id===selected),steps=subject.steps,done=progress[selected]||[],chat=messages.filter(m=>m.subject===selected);
  const state={selected,progress,saved,goal,messages,level};
  useEffect(()=>{try{localStorage.setItem('studyai-v1',JSON.stringify(state))}catch{setNotice('브라우저 저장 공간이 부족해 변경 사항을 저장하지 못했어요.')}},[selected,progress,saved,goal,messages,level]);
- async function refreshConnection(){const res=await fetch('/api/config',{cache:'no-store'});if(!res.ok)return;const v=await res.json();setConnection(v);setLive(v.enabled===true&&(v.authMode==='access-code'?v.authenticated:!!supabase))}
+ async function refreshConnection(){const res=await fetch('/api/config',{cache:'no-store'});if(!res.ok)return;const v=await res.json();setConnection(v);if(v.error)setNotice(v.error);setLive(v.enabled===true&&(v.authMode==='access-code'?v.authenticated:!!supabase))}
  useEffect(()=>{refreshConnection().catch(()=>{});},[]);
  async function unlock(event){event.preventDefault();if(accessBusy)return;setAccessBusy(true);try{const res=await fetch('/api/access',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:accessCode})});const data=await res.json();if(!res.ok)throw new Error(data.error);setAccessCode('');await refreshConnection();setNotice('AI 채팅 접속을 허용했습니다.')}catch(e){setNotice(e.message||'접속을 확인해 주세요.')}finally{setAccessBusy(false)}}
  async function lockChat(){await fetch('/api/access',{method:'DELETE'});await refreshConnection()}

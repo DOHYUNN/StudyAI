@@ -59,7 +59,7 @@ test('ChatKHU success extracts a reply and omits thought text',async()=>{
  const env={CHATKHU_CREDITS_CONFIRMED:'true',CHATKHU_API_KEY:'school-secret',CHATKHU_MODEL:'gemini-test',SUPABASE_URL:'https://example.supabase.co',SUPABASE_ANON_KEY:'test'};
  try {
   globalThis.fetch=async(url,options)=>{calls.push(url);if(calls.length===1)return Response.json({id:'test-user'});
-   const payload=JSON.parse(options.body);assert.equal(payload.generationConfig.maxOutputTokens,1800);
+   const payload=JSON.parse(options.body);assert.equal(payload.generationConfig.maxOutputTokens,512);
    assert.equal(options.headers.Authorization,'Bearer school-secret');
    return Response.json({candidates:[{content:{parts:[{thought:true,text:'hidden'},{text:'벡터는 크기와 방향을 가집니다.'}]}}]});};
   const request=new Request('https://example.com/api/chat',{method:'POST',headers:{Authorization:'Bearer session'},body:JSON.stringify(body)});
@@ -86,7 +86,7 @@ test('missing confirmation and invalid model never reach upstream; config expose
    assert.equal((await (await onRequestGet({env})).json()).enabled,false);
    assert.equal((await onRequestPost({env,request:new Request('https://example.com/api/chat',{method:'POST'})})).status,503);
   }
-  assert.deepEqual(await (await onRequestGet({env:base})).json(),{enabled:true,provider:'chatkhu',authMode:'supabase',authenticated:false});
+  assert.deepEqual(await (await onRequestGet({env:base})).json(),{enabled:true,provider:'chatkhu',authMode:'supabase',authenticated:false,model:'gemini-test'});
  }finally{globalThis.fetch=originalFetch}
 });
 
@@ -103,7 +103,7 @@ test('access-code login works without Supabase and never calls any AI',async()=>
   const result=await unlock({env:accessEnv,request:accessRequest(accessEnv.STUDYAI_ACCESS_CODE)});
   assert.equal(result.status,200);const cookie=result.headers.get('Set-Cookie');assert.match(cookie,/HttpOnly; Secure; SameSite=Strict/);assert.ok(!cookie.includes(accessEnv.STUDYAI_ACCESS_CODE));
   const request=new Request('https://example.com/api/config',{headers:{Cookie:cookie.split(';')[0]}});
-  assert.deepEqual(await (await onRequestGet({env:accessEnv,request})).json(),{enabled:true,provider:'chatkhu',authMode:'access-code',authenticated:true});assert.equal(calls,0);
+  assert.deepEqual(await (await onRequestGet({env:accessEnv,request})).json(),{enabled:true,provider:'chatkhu',authMode:'access-code',authenticated:true,model:'gemini-test'});assert.equal(calls,0);
   const logout=lock({request:new Request('https://example.com/api/access',{method:'DELETE',headers:{Origin:'https://example.com'}})});assert.match(logout.headers.get('Set-Cookie'),/Max-Age=0/);
  }finally{globalThis.fetch=originalFetch}
 });
@@ -131,9 +131,29 @@ import {onRequestGet as getModels} from '../functions/api/models.js';
 test('model metadata is protected and uses no generation route',async()=>{
  const originalFetch=globalThis.fetch;let calls=0;
  try{
-  globalThis.fetch=async(url)=>{calls++;assert.equal(url,'https://factchat-cloud.mindlogic.ai/v1/gateway/gemini/v1beta/models/');return Response.json({models:[{name:'models/gemini-test',displayName:'Test',supportedGenerationMethods:['generateContent']},{name:'models/embedding-test',supportedGenerationMethods:['embedContent']}]})};
+  globalThis.fetch=async(url)=>{calls++;assert.equal(url,'https://factchat-cloud.mindlogic.ai/v1/gateway/gemini/v1beta/models/?pageSize=1000');return Response.json({models:[{name:'models/gemini-test',displayName:'Test',supportedGenerationMethods:['generateContent']},{name:'models/embedding-test',supportedGenerationMethods:['embedContent']}]})};
   assert.equal((await getModels({env:accessEnv,request:new Request('https://example.com/api/models')})).status,401);assert.equal(calls,0);
   const cookie=(await createAccessCookie(accessEnv.STUDYAI_ACCESS_CODE,'https://example.com')).split(';')[0];
   const result=await getModels({env:accessEnv,request:new Request('https://example.com/api/models',{headers:{Cookie:cookie}})});assert.deepEqual(await result.json(),{models:[{id:'gemini-test',name:'Test'}]});assert.equal(calls,1);
+ }finally{globalThis.fetch=originalFetch}
+});
+
+test('automatic model selection reads metadata after login without generating any answer',async()=>{
+ const originalFetch=globalThis.fetch;let calls=0;
+ const env={...accessEnv,CHATKHU_API_KEY:'metadata-only-test-key',CHATKHU_MODEL:''};
+ try{
+  globalThis.fetch=async(url)=>{calls++;assert.equal(url,'https://factchat-cloud.mindlogic.ai/v1/gateway/gemini/v1beta/models/?pageSize=1000');return Response.json({models:[{name:'models/gemini-pro',supportedGenerationMethods:['generateContent']},{name:'models/gemini-flash-lite-preview',supportedGenerationMethods:['generateContent']},{name:'models/gemini-flash',supportedGenerationMethods:['generateContent']}]})};
+  const cookie=(await createAccessCookie(env.STUDYAI_ACCESS_CODE,'https://example.com')).split(';')[0];
+  const request=new Request('https://example.com/api/config',{headers:{Cookie:cookie}});
+  const first=await (await onRequestGet({env,request})).json();assert.equal(first.enabled,true);assert.equal(first.model,'gemini-flash');assert.equal(calls,1);
+  await onRequestGet({env,request});assert.equal(calls,1);
+ }finally{globalThis.fetch=originalFetch}
+});
+test('missing gateway model support leaves AI disabled without generation or retries',async()=>{
+ const originalFetch=globalThis.fetch;let calls=0;const env={...accessEnv,CHATKHU_API_KEY:'empty-model-test-key',CHATKHU_MODEL:''};
+ try{
+  globalThis.fetch=async()=>{calls++;return Response.json({models:[]})};
+  const cookie=(await createAccessCookie(env.STUDYAI_ACCESS_CODE,'https://example.com')).split(';')[0];
+  const data=await (await onRequestGet({env,request:new Request('https://example.com/api/config',{headers:{Cookie:cookie}})})).json();assert.equal(data.enabled,false);assert.ok(data.error);assert.equal(calls,1);
  }finally{globalThis.fetch=originalFetch}
 });
