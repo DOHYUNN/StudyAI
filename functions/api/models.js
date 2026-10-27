@@ -1,7 +1,7 @@
 import {authMode} from '../../shared/chatkhu.js';
 import {hasAccess} from '../../shared/access.js';
 import {verifyTurnstile} from '../../shared/turnstile.js';
-import {availableModels,selectModel} from '../../shared/models.js';
+import {availableModels,selectModel,ModelLookupError} from '../../shared/models.js';
 const json=(body,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'no-store'}});
 // Read-only model metadata. Never calls generateContent.
 export async function onRequestGet({request,env}){
@@ -18,5 +18,5 @@ export async function onRequestPost({request,env}){
   const model=env.CHATKHU_MODEL||selectModel(models);
   if(!models.some(m=>m.id===model))return json({error:'지정한 모델을 이 키로 사용할 수 없습니다.'},502);
   return json({connected:true,model});
- }catch{return json({error:'ChatKHU 키 또는 모델 권한을 확인해 주세요.'},502)}
+ }catch(e){return json({error:e instanceof ModelLookupError?e.message:'ChatKHU 연결 시간이 초과됐거나 응답을 읽지 못했습니다.',...(e instanceof ModelLookupError?{gatewayStatus:e.status,code:e.code}:{})},502)}
 }
