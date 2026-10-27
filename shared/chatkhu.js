@@ -11,3 +11,9 @@ export function chatkhuReady(env) {
   && (env.CHATKHU_MODEL===undefined || env.CHATKHU_MODEL==='' || typeof env.CHATKHU_MODEL === 'string' && /^gemini-[a-zA-Z0-9._-]+$/.test(env.CHATKHU_MODEL))
   && !!authMode(env);
 }
+
+export function gatewayKey(env){
+ let key=typeof env.CHATKHU_API_KEY==='string'?env.CHATKHU_API_KEY.trim():'';
+ if((key.startsWith('"')&&key.endsWith('"'))||(key.startsWith("'")&&key.endsWith("'")))key=key.slice(1,-1).trim();
+ return key.replace(/^Bearer\s+/i,'').trim();
+}

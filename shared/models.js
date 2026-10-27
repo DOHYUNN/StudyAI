@@ -1,8 +1,9 @@
+import {gatewayKey} from './chatkhu.js';
 // Only metadata is requested here. Generation happens exclusively in /api/chat.
 let cached;
 export class ModelLookupError extends Error {constructor(message,status=null,code=null){super(message);this.status=status;this.code=code}}
 export async function availableModels(env){
- const result=await fetch('https://factchat-cloud.mindlogic.ai/v1/gateway/models/?type=llm',{headers:{Authorization:`Bearer ${env.CHATKHU_API_KEY}`,'User-Agent':'StudyAI/1.0','Accept':'application/json'},signal:AbortSignal.timeout(10000)});
+ const result=await fetch('https://factchat-cloud.mindlogic.ai/v1/gateway/models/?type=llm',{headers:{Authorization:`Bearer ${gatewayKey(env)}`,'User-Agent':'StudyAI/1.0','Accept':'application/json'},signal:AbortSignal.timeout(10000)});
  if(!result.ok)throw new ModelLookupError(`ChatKHU 모델 목록 조회 오류 (HTTP ${result.status}). API 키와 Gateway 이용 권한을 확인해 주세요.`,result.status,'gateway-http');
  const data=await result.json();
  if(Array.isArray(data.data))return data.data.filter(m=>(!m.type||m.type==='llm')&&/^gemini-[a-zA-Z0-9._-]+$/.test(m.id||'')).map(m=>({id:m.id,name:m.display_name||m.id}));

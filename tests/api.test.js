@@ -199,3 +199,8 @@ test('catalog request sends the documented User-Agent and selects only Gemini ch
   assert.deepEqual(await availableModels({CHATKHU_API_KEY:'metadata-key'}),[{id:'gemini-flash',name:'gemini-flash'}]);
  }finally{globalThis.fetch=originalFetch}
 });
+
+test('pasted key wrappers are normalized without changing the key value',async()=>{
+ const {gatewayKey}=await import('../shared/chatkhu.js');
+ assert.equal(gatewayKey({CHATKHU_API_KEY:'  "Bearer example-key"  '}),'example-key');assert.equal(gatewayKey({CHATKHU_API_KEY:'example-key'}),'example-key');
+});
