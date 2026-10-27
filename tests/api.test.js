@@ -131,7 +131,7 @@ import {onRequestGet as getModels} from '../functions/api/models.js';
 test('model metadata is protected and uses no generation route',async()=>{
  const originalFetch=globalThis.fetch;let calls=0;
  try{
-  globalThis.fetch=async(url)=>{calls++;assert.equal(url,'https://factchat-cloud.mindlogic.ai/v1/gateway/gemini/v1beta/models/?pageSize=1000');return Response.json({models:[{name:'models/gemini-test',displayName:'Test',supportedGenerationMethods:['generateContent']},{name:'models/embedding-test',supportedGenerationMethods:['embedContent']}]})};
+  globalThis.fetch=async(url)=>{calls++;assert.equal(url,'https://factchat-cloud.mindlogic.ai/v1/gateway/models/?type=llm');return Response.json({models:[{name:'models/gemini-test',displayName:'Test',supportedGenerationMethods:['generateContent']},{name:'models/embedding-test',supportedGenerationMethods:['embedContent']}]})};
   assert.equal((await getModels({env:accessEnv,request:new Request('https://example.com/api/models')})).status,401);assert.equal(calls,0);
   const cookie=(await createAccessCookie(accessEnv.STUDYAI_ACCESS_CODE,'https://example.com')).split(';')[0];
   const result=await getModels({env:accessEnv,request:new Request('https://example.com/api/models',{headers:{Cookie:cookie}})});assert.deepEqual(await result.json(),{models:[{id:'gemini-test',name:'Test'}]});assert.equal(calls,1);
@@ -142,7 +142,7 @@ test('automatic model selection reads metadata after login without generating an
  const originalFetch=globalThis.fetch;let calls=0;
  const env={...accessEnv,CHATKHU_API_KEY:'metadata-only-test-key',CHATKHU_MODEL:''};
  try{
-  globalThis.fetch=async(url)=>{calls++;assert.equal(url,'https://factchat-cloud.mindlogic.ai/v1/gateway/gemini/v1beta/models/?pageSize=1000');return Response.json({models:[{name:'models/gemini-pro',supportedGenerationMethods:['generateContent']},{name:'models/gemini-flash-lite-preview',supportedGenerationMethods:['generateContent']},{name:'models/gemini-flash',supportedGenerationMethods:['generateContent']}]})};
+  globalThis.fetch=async(url)=>{calls++;assert.equal(url,'https://factchat-cloud.mindlogic.ai/v1/gateway/models/?type=llm');return Response.json({models:[{name:'models/gemini-pro',supportedGenerationMethods:['generateContent']},{name:'models/gemini-flash-lite-preview',supportedGenerationMethods:['generateContent']},{name:'models/gemini-flash',supportedGenerationMethods:['generateContent']}]})};
   const cookie=(await createAccessCookie(env.STUDYAI_ACCESS_CODE,'https://example.com')).split(';')[0];
   const request=new Request('https://example.com/api/config',{headers:{Cookie:cookie}});
   const first=await (await onRequestGet({env,request})).json();assert.equal(first.enabled,true);assert.equal(first.model,'gemini-flash');assert.equal(calls,1);
@@ -179,7 +179,7 @@ test('missing, duplicate, failed, wrong-host or wrong-action challenges never re
 test('connection check only validates challenge and reads metadata, never generates text',async()=>{
  const originalFetch=globalThis.fetch;const calls=[];
  try{
-  globalThis.fetch=async(url)=>{calls.push(url);if(calls.length===1)return Response.json({success:true,hostname:'example.com',action:'studyai-chat'});assert.match(url,/\/models\/\?pageSize=1000$/);return Response.json({models:[{name:'models/gemini-flash',supportedGenerationMethods:['generateContent']}]})};
+  globalThis.fetch=async(url)=>{calls.push(url);if(calls.length===1)return Response.json({success:true,hostname:'example.com',action:'studyai-chat'});assert.match(url,/\/models\/\?type=llm$/);return Response.json({models:[{name:'models/gemini-flash',supportedGenerationMethods:['generateContent']}]})};
   const res=await inspectModels({env:turnstileEnv,request:verifiedRequest('/api/models')});assert.equal(res.status,200);assert.deepEqual(await res.json(),{connected:true,model:'gemini-flash'});assert.equal(calls.length,2);assert.ok(calls.every(url=>!url.includes(':generateContent')));
  }finally{globalThis.fetch=originalFetch}
 });
@@ -189,5 +189,13 @@ test('validated Turnstile chat reaches Gateway directly without a database or sh
  try{
   globalThis.fetch=async(url,options)=>{calls.push(url);if(calls.length===1)return Response.json({success:true,hostname:'example.com',action:'studyai-chat'});assert.match(url,/\/gemini\/v1beta\/models\/gemini-test:generateContent$/);assert.equal(options.headers.Authorization,'Bearer turnstile-test-key');return Response.json({candidates:[{content:{parts:[{text:'mock answer'}]}}]})};
   const res=await onRequestPost({env:{...turnstileEnv,CHATKHU_MODEL:'gemini-test'},request:verifiedRequest()});assert.equal(res.status,200);assert.deepEqual(await res.json(),{reply:'mock answer'});assert.equal(calls.length,2);
+ }finally{globalThis.fetch=originalFetch}
+});
+
+test('catalog request sends the documented User-Agent and selects only Gemini chat models',async()=>{
+ const {availableModels}=await import('../shared/models.js');const originalFetch=globalThis.fetch;
+ try{
+  globalThis.fetch=async(url,options)=>{assert.equal(url,'https://factchat-cloud.mindlogic.ai/v1/gateway/models/?type=llm');assert.equal(options.headers['User-Agent'],'StudyAI/1.0');assert.equal(options.headers.Authorization,'Bearer metadata-key');return Response.json({data:[{id:'gemini-flash',type:'llm',owned_by:'gemini'},{id:'gpt-example',type:'llm'},{id:'gemini-image',type:'image'}]})};
+  assert.deepEqual(await availableModels({CHATKHU_API_KEY:'metadata-key'}),[{id:'gemini-flash',name:'gemini-flash'}]);
  }finally{globalThis.fetch=originalFetch}
 });
