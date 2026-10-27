@@ -15,3 +15,7 @@ STUDYAI_ACCESS_CODE=
 # Optional: enable Supabase later for cloud records / alternative session auth.
 SUPABASE_URL=
 SUPABASE_ANON_KEY=
+# Local-only personal LearningX token. Never upload this value to Pages.
+CANVAS_ACCESS_TOKEN=
+# Production owner restriction: your Canvas numeric user ID (server-only).
+CANVAS_OWNER_ID=
