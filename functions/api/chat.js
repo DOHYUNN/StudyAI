@@ -1,18 +1,24 @@
 import {MAX_FILES,MAX_TOTAL_BYTES,MAX_REQUEST_BYTES,validAttachments,toGeminiContents} from '../../shared/attachments.js';
-import {chatkhuReady} from '../../shared/chatkhu.js';
+import {chatkhuReady,authMode} from '../../shared/chatkhu.js';
+import {hasAccess} from '../../shared/access.js';
 const json=(body,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'no-store'}});
 export function validate(body){
  return body && typeof body.subject==='string' && body.subject.length>0 && body.subject.length<=100 && (body.level==null || typeof body.level==='string'&&body.level.length<=100) && Array.isArray(body.messages) && body.messages.length>0 && body.messages.length<=10 && body.messages.every(m=>m&&['user','assistant'].includes(m.role)&&typeof m.text==='string'&&m.text.trim().length>0&&m.text.length<=4000 && (m.attachments===undefined || m.role==='user' && validAttachments(m.attachments))) && body.messages.reduce((n,m)=>n+(m.attachments?.length||0),0)<=MAX_FILES && body.messages.reduce((n,m)=>n+(m.attachments||[]).reduce((sum,f)=>sum+f.size,0),0)<=MAX_TOTAL_BYTES && body.messages.at(-1).role==='user';
 }
 export async function onRequestPost({request,env}){
- if(!chatkhuReady(env))return json({error:'ChatKHU 연결 설정이 필요합니다. 학교 제공 크레딧 확인, API 키, Gemini 모델 및 Supabase 설정을 확인해 주세요.'},503);
+ if(!chatkhuReady(env))return json({error:'ChatKHU 연결 설정이 필요합니다. 학교 제공 크레딧 확인, API 키, Gemini 모델 및 접속 설정을 확인해 주세요.'},503);
  const model=env.CHATKHU_MODEL;
  if(request.headers.get('Origin') && request.headers.get('Origin')!==new URL(request.url).origin)return json({error:'허용되지 않은 요청입니다.'},403);
+ const mode=authMode(env);
  const authorization=request.headers.get('Authorization');
- if(!authorization?.startsWith('Bearer '))return json({error:'학습 세션을 먼저 연결해 주세요.'},401);
+ if(mode==='supabase'&&!authorization?.startsWith('Bearer '))return json({error:'학습 세션을 먼저 연결해 주세요.'},401);
  try{
-  const auth=await fetch(`${env.SUPABASE_URL}/auth/v1/user`,{headers:{Authorization:authorization,apikey:env.SUPABASE_ANON_KEY},signal:AbortSignal.timeout(8000)});
-  if(!auth.ok)return json({error:'학습 세션이 만료됐어요. 새로고침 후 다시 시도해 주세요.'},401);
+  if(mode==='access-code'){
+   if(!await hasAccess(request,env.STUDYAI_ACCESS_CODE))return json({error:'접속 암호를 입력한 후 다시 질문해 주세요.'},401);
+  }else{
+   const auth=await fetch(`${env.SUPABASE_URL}/auth/v1/user`,{headers:{Authorization:authorization,apikey:env.SUPABASE_ANON_KEY},signal:AbortSignal.timeout(8000)});
+   if(!auth.ok)return json({error:'학습 세션이 만료됐어요. 새로고침 후 다시 시도해 주세요.'},401);
+  }
   if(Number(request.headers.get('Content-Length'))>MAX_REQUEST_BYTES)return json({error:'첨부 파일이 너무 큽니다. 파일당 2 MB, 최대 3개까지 가능합니다.'},413);
   const reader=request.body?.getReader();if(!reader)return json({error:'질문 내용이 없습니다.'},400);
   let size=0;const chunks=[];

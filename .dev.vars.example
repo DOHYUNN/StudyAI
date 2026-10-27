@@ -5,5 +5,8 @@ CHATKHU_API_KEY=
 # Exact available Gemini model ID from ChatKHU /v1/gateway/models/.
 # Use a gemini-... ID; no default or fallback model is selected.
 CHATKHU_MODEL=
+# At least 16 characters, separate from the API key. Private chat access without Supabase.
+STUDYAI_ACCESS_CODE=
+# Optional: enable Supabase later for cloud records / alternative session auth.
 SUPABASE_URL=
 SUPABASE_ANON_KEY=

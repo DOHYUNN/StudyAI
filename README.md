@@ -63,14 +63,15 @@ Cloudflare 대시보드 → Workers & Pages → **studyai (Pages)** → Settings
 | `CHATKHU_API_KEY` | **Secret** 유형으로 ChatKHU 발급 키 입력. 채팅, GitHub, VITE_ 변수에 입력 금지 |
 | `CHATKHU_MODEL` | ChatKHU 모델 목록에서 계정에 허용된 `gemini-...` 모델의 정확한 ID |
 | `CHATKHU_CREDITS_CONFIRMED` | 학교 제공 크레딧 및 추가 결제 없는 조건을 확인한 뒤 `true` |
-| `SUPABASE_URL`, `SUPABASE_ANON_KEY` | 위 Supabase 연결에서 준비한 서버 인증 설정 |
-| `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` | 동일 프로젝트의 프런트엔드 빌드 설정 |
+| `STUDYAI_ACCESS_CODE` | API 키와 다른 16~128자의 추측하기 어려운 접속 암호를 Secret으로 설정. Supabase 없이 AI 사용 가능 |
+| `SUPABASE_URL`, `SUPABASE_ANON_KEY` | 선택 사항: 추후 Supabase 연결 시 설정 |
+| `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` | 선택 사항: Supabase 연동 시 프런트엔드 빌드 설정 |
 
-Supabase Anonymous Sign-ins와 RLS 테이블 준비도 필요합니다. 설정 후 Pages의 최신 배포를 다시 배포해야 빌드 변수와 서버 비밀 설정이 함께 적용됩니다. 이 단계 전에는 데모 모드를 유지합니다.
+AI 채팅은 Supabase 없이 접속 암호로 먼저 사용할 수 있습니다. 설정 후 Pages 최신 배포를 다시 배포하고, 웹사이트 입력창 위에 표시되는 접속 암호 칸에 같은 암호를 입력합니다. `/api/access`는 AI 호출 없이 암호를 검증하고 4시간 유효한 서명 쿠키(HttpOnly, Secure, SameSite=Strict)를 발급합니다. 암호는 브라우저 저장소나 URL에 기록하지 않습니다. 암호 변경 시 기존 쿠키는 무효가 됩니다. 공유 암호 방식은 소규모 팀 시연용이며, 암호 보유자별 사용량 구분 및 로그인 시도 제한은 아직 제공하지 않습니다. 공개 서비스로 확장할 때는 개별 로그인과 요청 제한이 필요합니다. Supabase는 나중에 클라우드 기록 저장용으로 연결할 수 있습니다.
 
 제공받은 ChatKHU API Gateway 안내의 **Gemini 네이티브 호환 형식**을 사용합니다. 서버는 `Authorization: Bearer` 헤더로 `https://factchat-cloud.mindlogic.ai/v1/gateway/gemini/v1beta/models/{CHATKHU_MODEL}:generateContent`를 호출합니다. 모델 목록은 인증된 `GET https://factchat-cloud.mindlogic.ai/v1/gateway/models/`에서 확인합니다. 기본 모델을 임의로 선택하거나 다른 제공업체로 자동 전환하지 않습니다. PDF·이미지 분석은 선택한 모델과 Gateway의 지원 여부를 실제로 확인해야 합니다.
 
-`/api/config`는 준비 여부와 제공업체 이름만 반환합니다. `/api/chat`은 기존 Supabase 세션을 검증한 뒤 학교 Gateway에 요청합니다. 크레딧 부족(402), 요청 한도(429), 인증 실패 등은 오류를 표시하고 재시도하지 않습니다. 최근 대화 8개와 현재 질문만 전달하고 답변은 최대 1,800 토큰으로 제한합니다. **이 제한과 확인 변수는 계정의 결제 상태나 남은 크레딧을 자동 검증하지 않습니다.** 잔액 자동 조회 및 사용자별 사용량 제한은 후속 작업입니다.
+`/api/config`는 준비 여부와 제공업체 이름만 반환합니다. `/api/chat`은 접속 암호로 발급된 쿠키를 검증한 뒤 학교 Gateway에 요청합니다. 접속 암호 설정 없이 Supabase만 연결한 기존 환경은 Supabase 세션을 사용합니다. 크레딧 부족(402), 요청 한도(429), 인증 실패 등은 오류를 표시하고 재시도하지 않습니다. 최근 대화 8개와 현재 질문만 전달하고 답변은 최대 1,800 토큰으로 제한합니다. 이 값은 출력 한도이며 입력 및 추론 토큰까지 합친 전체 사용량 보장이 아닙니다. 사용자의 테스트 제한에 따라 실제 모델 생성 테스트는 실행하지 않습니다. 인증 및 모의 응답 테스트만 수행합니다. **이 제한과 확인 변수는 계정의 결제 상태나 남은 크레딧을 자동 검증하지 않습니다.** 잔액 자동 조회 및 사용자별 사용량 제한은 후속 작업입니다.
 
 `npm run dev`는 UI와 데모 검사용이며 Pages Functions는 실행하지 않습니다. 전체 로컬 연동 검증은 Cloudflare Pages 로컬 개발 환경에서 실행해야 합니다. 모의 API 응답으로 인증 헤더, 파일 전달, 답변 처리, 한도 오류 중단을 검증했습니다. 실제 키가 없어 학교 Gateway 및 Supabase의 실호출은 아직 검증하지 않았습니다.
 
