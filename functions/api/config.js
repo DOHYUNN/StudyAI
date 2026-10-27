@@ -6,5 +6,5 @@ export async function onRequestGet({env,request}) {
  const authenticated=mode==='access-code'&&!!request&&await hasAccess(request,env.STUDYAI_ACCESS_CODE);
  let enabled=chatkhuReady(env),model=env.CHATKHU_MODEL||null,error=null;
  if(enabled&&authenticated){try{model=await resolveModel(env)}catch{enabled=false;error='ChatKHU 모델 연결을 확인해 주세요.'}}
- return Response.json({enabled,provider:'chatkhu',authMode:mode,authenticated,...(model?{model}:{}),...(error?{error}:{})},{headers:{'Cache-Control':'no-store'}});
+ return Response.json({enabled,provider:'chatkhu',authMode:mode,authenticated,...(mode==='turnstile'?{siteKey:env.TURNSTILE_SITE_KEY}:{}),...(model?{model}:{}),...(error?{error}:{})},{headers:{'Cache-Control':'no-store'}});
 }

@@ -157,3 +157,37 @@ test('missing gateway model support leaves AI disabled without generation or ret
   const data=await (await onRequestGet({env,request:new Request('https://example.com/api/config',{headers:{Cookie:cookie}})})).json();assert.equal(data.enabled,false);assert.ok(data.error);assert.equal(calls,1);
  }finally{globalThis.fetch=originalFetch}
 });
+
+import {onRequestPost as inspectModels} from '../functions/api/models.js';
+const turnstileEnv={CHATKHU_CREDITS_CONFIRMED:'true',CHATKHU_API_KEY:'turnstile-test-key',TURNSTILE_SITE_KEY:'public-key',TURNSTILE_SECRET_KEY:'verification-secret'};
+const verifiedRequest=(path='/api/chat',token='single-use-token')=>new Request(`https://example.com${path}`,{method:'POST',headers:{Origin:'https://example.com','X-StudyAI-Turnstile':token},body:path==='/api/chat'?JSON.stringify(body):undefined});
+test('Turnstile configuration replaces the shared password without exposing server keys',async()=>{
+ const cfg=await (await onRequestGet({env:{...turnstileEnv,STUDYAI_ACCESS_CODE:'old-access-code-should-not-be-used'},request:new Request('https://example.com/api/config')})).json();
+ assert.equal(cfg.enabled,true);assert.equal(cfg.authMode,'turnstile');assert.equal(cfg.siteKey,'public-key');assert.ok(!JSON.stringify(cfg).includes('verification-secret'));assert.ok(!JSON.stringify(cfg).includes('turnstile-test-key'));
+});
+test('missing, duplicate, failed, wrong-host or wrong-action challenges never reach school API',async()=>{
+ const originalFetch=globalThis.fetch;
+ try{
+  let calls=0;globalThis.fetch=async()=>{calls++;throw Error('must not call')};
+  assert.equal((await onRequestPost({env:turnstileEnv,request:verifiedRequest('/api/chat','')})).status,401);assert.equal(calls,0);
+  for(const value of [{success:false,'error-codes':['timeout-or-duplicate']},{success:true,hostname:'other.com',action:'studyai-chat'},{success:true,hostname:'example.com',action:'other-action'}]){
+   calls=0;globalThis.fetch=async(url,options)=>{calls++;assert.equal(url,'https://challenges.cloudflare.com/turnstile/v0/siteverify');const payload=JSON.parse(options.body);assert.equal(payload.secret,'verification-secret');return Response.json(value)};
+   assert.equal((await onRequestPost({env:turnstileEnv,request:verifiedRequest()})).status,401);assert.equal(calls,1);
+  }
+ }finally{globalThis.fetch=originalFetch}
+});
+test('connection check only validates challenge and reads metadata, never generates text',async()=>{
+ const originalFetch=globalThis.fetch;const calls=[];
+ try{
+  globalThis.fetch=async(url)=>{calls.push(url);if(calls.length===1)return Response.json({success:true,hostname:'example.com',action:'studyai-chat'});assert.match(url,/\/models\/\?pageSize=1000$/);return Response.json({models:[{name:'models/gemini-flash',supportedGenerationMethods:['generateContent']}]})};
+  const res=await inspectModels({env:turnstileEnv,request:verifiedRequest('/api/models')});assert.equal(res.status,200);assert.deepEqual(await res.json(),{connected:true,model:'gemini-flash'});assert.equal(calls.length,2);assert.ok(calls.every(url=>!url.includes(':generateContent')));
+ }finally{globalThis.fetch=originalFetch}
+});
+
+test('validated Turnstile chat reaches Gateway directly without a database or shared password',async()=>{
+ const originalFetch=globalThis.fetch;const calls=[];
+ try{
+  globalThis.fetch=async(url,options)=>{calls.push(url);if(calls.length===1)return Response.json({success:true,hostname:'example.com',action:'studyai-chat'});assert.match(url,/\/gemini\/v1beta\/models\/gemini-test:generateContent$/);assert.equal(options.headers.Authorization,'Bearer turnstile-test-key');return Response.json({candidates:[{content:{parts:[{text:'mock answer'}]}}]})};
+  const res=await onRequestPost({env:{...turnstileEnv,CHATKHU_MODEL:'gemini-test'},request:verifiedRequest()});assert.equal(res.status,200);assert.deepEqual(await res.json(),{reply:'mock answer'});assert.equal(calls.length,2);
+ }finally{globalThis.fetch=originalFetch}
+});

@@ -7,7 +7,10 @@ CHATKHU_API_KEY=
 CHATKHU_MODEL=
 # Output limit only; input and thinking tokens are not included.
 CHATKHU_MAX_OUTPUT_TOKENS=512
-# At least 16 characters, separate from the API key. Private chat access without Supabase.
+# Recommended: free Cloudflare Turnstile widget. No shared login password.
+TURNSTILE_SITE_KEY=
+TURNSTILE_SECRET_KEY=
+# Legacy alternative: at least 16 characters, separate from the API key.
 STUDYAI_ACCESS_CODE=
 # Optional: enable Supabase later for cloud records / alternative session auth.
 SUPABASE_URL=

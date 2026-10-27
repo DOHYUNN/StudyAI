@@ -6,3 +6,5 @@
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
 
 .access-form{border:1px solid #d5e1cc;background:#f9fcf5;border-radius:12px;padding:15px 17px;margin-bottom:12px}.access-form label{display:block;font-size:12px;font-weight:600;margin-bottom:9px}.access-form>div{display:flex;gap:9px}.access-form input{min-width:0;flex:1;border:1px solid #d2ddcb;background:white;border-radius:8px;padding:10px 12px;font-size:12px}.access-form small{display:block;font-size:10px;line-height:1.8;color:#819373;margin-top:9px}.has-messages .access-form{padding:10px 15px}.settings-card>.secondary{margin-left:10px}
+
+.chat-verification{margin:0 0 10px;max-width:100%;min-height:0}.chat-verification>span{display:block;font-size:11px;line-height:1.8;color:#7d8e72}.chat-verification button{text-decoration:underline;color:var(--green)}

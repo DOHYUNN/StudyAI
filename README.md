@@ -63,15 +63,16 @@ Cloudflare 대시보드 → Workers & Pages → **studyai (Pages)** → Settings
 | `CHATKHU_API_KEY` | **Secret** 유형으로 ChatKHU 발급 키 입력. 채팅, GitHub, VITE_ 변수에 입력 금지 |
 | `CHATKHU_MODEL` | 선택 사항: 고정할 `gemini-...` 모델 ID. 비워두면 Gateway 목록의 Gemini Flash 계열을 우선 선택 |
 | `CHATKHU_CREDITS_CONFIRMED` | 학교 제공 크레딧 및 추가 결제 없는 조건을 확인한 뒤 `true` |
-| `STUDYAI_ACCESS_CODE` | API 키와 다른 16~128자의 추측하기 어려운 접속 암호를 Secret으로 설정. Supabase 없이 AI 사용 가능 |
+| `TURNSTILE_SITE_KEY` | 무료 Turnstile 위젯의 공개 사이트 키. 호스트는 studyai-9ju.pages.dev |
+| `TURNSTILE_SECRET_KEY` | 같은 위젯의 서버 비밀 키를 Secret으로 설정 |
 | `SUPABASE_URL`, `SUPABASE_ANON_KEY` | 선택 사항: 추후 Supabase 연결 시 설정 |
 | `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` | 선택 사항: Supabase 연동 시 프런트엔드 빌드 설정 |
 
-AI 채팅은 Supabase 없이 접속 암호로 먼저 사용할 수 있습니다. 설정 후 Pages 최신 배포를 다시 배포하고, 웹사이트 입력창 위에 표시되는 접속 암호 칸에 같은 암호를 입력합니다. `/api/access`는 AI 호출 없이 암호를 검증하고 4시간 유효한 서명 쿠키(HttpOnly, Secure, SameSite=Strict)를 발급합니다. 암호는 브라우저 저장소나 URL에 기록하지 않습니다. 암호 변경 시 기존 쿠키는 무효가 됩니다. 공유 암호 방식은 소규모 팀 시연용이며, 암호 보유자별 사용량 구분 및 로그인 시도 제한은 아직 제공하지 않습니다. 공개 서비스로 확장할 때는 개별 로그인과 요청 제한이 필요합니다. Supabase는 나중에 클라우드 기록 저장용으로 연결할 수 있습니다.
+AI 채팅은 Supabase나 별도 접속 암호 없이 Cloudflare Turnstile 사용자 확인 후 사용할 수 있습니다. 위젯과 서버 키가 모두 있으면 기존 접속 암호 방식보다 우선 적용됩니다. 검증은 Cloudflare Siteverify에서 수행하며 성공 여부, 현재 호스트 이름, `studyai-chat` 액션을 확인합니다. 토큰은 일회용이며 만료 또는 요청 실패 시 새로 확인합니다. Turnstile는 봇 확인이며 개인별 인증이나 사용량 제한은 아닙니다. 학교 크레딧은 계정에서 관리하고, 공개 운영 시 사용자별 사용량 제한을 추가해야 합니다. Supabase는 나중에 기록 저장용으로 연결할 수 있습니다. `STUDYAI_ACCESS_CODE`를 사용한 이전 배포의 호환 코드는 유지하되 Turnstile 설정 시 접속 암호 UI는 표시되지 않습니다. 설정 후 재배포해야 반영됩니다.
 
 제공받은 ChatKHU API Gateway 안내의 **Gemini 네이티브 호환 형식**을 사용합니다. 서버는 `Authorization: Bearer` 헤더로 `https://factchat-cloud.mindlogic.ai/v1/gateway/gemini/v1beta/models/{CHATKHU_MODEL}:generateContent`를 호출합니다. 모델 목록은 인증된 `GET https://factchat-cloud.mindlogic.ai/v1/gateway/models/`에서 확인합니다. 모델 ID를 지정하지 않으면 인증 후 Gateway 모델 목록에서 generateContent를 지원하는 Gemini 모델을 선택합니다. 이름에 Flash-Lite, Flash가 포함된 정식 모델을 우선합니다. 이는 크레딧 단가를 보장하지 않습니다. 목록은 서버 메모리에 5분간 보관하며 모델 오류 시 다른 제공업체나 모델로 재시도하지 않습니다. PDF·이미지 분석은 선택한 모델과 Gateway의 지원 여부를 실제로 확인해야 합니다.
 
-`/api/config`는 준비 여부와 제공업체 이름만 반환합니다. `/api/chat`은 접속 암호로 발급된 쿠키를 검증한 뒤 학교 Gateway에 요청합니다. 접속 암호 설정 없이 Supabase만 연결한 기존 환경은 Supabase 세션을 사용합니다. 크레딧 부족(402), 요청 한도(429), 인증 실패 등은 오류를 표시하고 재시도하지 않습니다. 최근 대화 8개와 현재 질문만 전달하고 답변 출력은 기본 최대 512 토큰으로 제한합니다. `CHATKHU_MAX_OUTPUT_TOKENS`로 64~1,800 사이에서 변경할 수 있습니다. 이 값은 출력 한도이며 입력 및 추론 토큰까지 합친 전체 사용량 보장이 아닙니다. 사용자의 테스트 제한에 따라 실제 모델 생성 테스트는 실행하지 않습니다. 인증 및 모의 응답 테스트만 수행합니다. **이 제한과 확인 변수는 계정의 결제 상태나 남은 크레딧을 자동 검증하지 않습니다.** 잔액 자동 조회 및 사용자별 사용량 제한은 후속 작업입니다.
+`/api/config`는 준비 여부와 제공업체 이름만 반환합니다. `/api/chat`은 Turnstile 검증 후 학교 Gateway에 요청합니다. 이전 환경에서는 접속 암호 쿠키 또는 Supabase 세션 검증도 지원합니다. 설정의 AI 연결 확인 버튼은 Turnstile 검증 및 모델 목록 GET만 수행하며 generateContent를 호출하지 않습니다. 크레딧 부족(402), 요청 한도(429), 인증 실패 등은 오류를 표시하고 재시도하지 않습니다. 최근 대화 8개와 현재 질문만 전달하고 답변 출력은 기본 최대 512 토큰으로 제한합니다. `CHATKHU_MAX_OUTPUT_TOKENS`로 64~1,800 사이에서 변경할 수 있습니다. 이 값은 출력 한도이며 입력 및 추론 토큰까지 합친 전체 사용량 보장이 아닙니다. 사용자의 테스트 제한에 따라 실제 모델 생성 테스트는 실행하지 않습니다. 인증 및 모의 응답 테스트만 수행합니다. **이 제한과 확인 변수는 계정의 결제 상태나 남은 크레딧을 자동 검증하지 않습니다.** 잔액 자동 조회 및 사용자별 사용량 제한은 후속 작업입니다.
 
 `npm run dev`는 UI와 데모 검사용이며 Pages Functions는 실행하지 않습니다. 전체 로컬 연동 검증은 Cloudflare Pages 로컬 개발 환경에서 실행해야 합니다. 모의 API 응답으로 인증 헤더, 파일 전달, 답변 처리, 한도 오류 중단을 검증했습니다. 실제 키가 없어 학교 Gateway 및 Supabase의 실호출은 아직 검증하지 않았습니다.
 

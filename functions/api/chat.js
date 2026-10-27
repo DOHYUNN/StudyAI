@@ -1,5 +1,6 @@
 import {MAX_FILES,MAX_TOTAL_BYTES,MAX_REQUEST_BYTES,validAttachments,toGeminiContents} from '../../shared/attachments.js';
 import {chatkhuReady,authMode} from '../../shared/chatkhu.js';
+import {verifyTurnstile} from '../../shared/turnstile.js';
 import {hasAccess} from '../../shared/access.js';
 import {resolveModel,maxOutputTokens,ModelLookupError} from '../../shared/models.js';
 const json=(body,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'no-store'}});
@@ -13,7 +14,9 @@ export async function onRequestPost({request,env}){
  const authorization=request.headers.get('Authorization');
  if(mode==='supabase'&&!authorization?.startsWith('Bearer '))return json({error:'학습 세션을 먼저 연결해 주세요.'},401);
  try{
-  if(mode==='access-code'){
+  if(mode==='turnstile'){
+   if(!await verifyTurnstile(request,env))return json({error:'사용자 확인을 완료한 뒤 다시 시도해 주세요.'},401);
+  }else if(mode==='access-code'){
    if(!await hasAccess(request,env.STUDYAI_ACCESS_CODE))return json({error:'접속 암호를 입력한 후 다시 질문해 주세요.'},401);
   }else{
    const auth=await fetch(`${env.SUPABASE_URL}/auth/v1/user`,{headers:{Authorization:authorization,apikey:env.SUPABASE_ANON_KEY},signal:AbortSignal.timeout(8000)});
