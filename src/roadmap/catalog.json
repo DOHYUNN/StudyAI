@@ -1,0 +1,2094 @@
+{
+  "id": "khu-mechanical-2026-v1",
+  "university": "경희대학교",
+  "department": "기계공학부 · 기계공학전공",
+  "curriculumYear": 2026,
+  "sourceTitle": "2026 공과대학 교육과정 · 사용자 제공 PDF",
+  "sourceUrl": "",
+  "verified": true,
+  "sourceFileName": "2026 공과대학_교육과정 (1).pdf",
+  "sourceSha256": "7eb6c66a629cb0ae815dea5141fd44e1025e0480c0516892f07039bb9214179c",
+  "sourcePages": [
+    6,
+    8,
+    9,
+    11,
+    12,
+    13,
+    14,
+    15,
+    29,
+    32,
+    36,
+    37,
+    38,
+    39
+  ],
+  "policyNotes": [
+    "2026년 3월 1일 시행 교육과정입니다. 이전 입학자는 경과조치 적용 여부를 별도로 확인해야 합니다.",
+    "과목의 권장 학년·개설학기는 별표1 편성표를 우선 사용합니다. 이수체계도와 일부 차이가 있어 해당 과목 상세에 표시했습니다.",
+    "이름·내용이 비슷한 과목의 대체 이수를 자동으로 인정하지 않습니다. 본 기계공학부 자료에서 일반화학 APCH1131을 화학1·2로 대체하는 규정은 확인되지 않았습니다.",
+    "편성 및 학부 내 전공선택 인정 과목 66개와 졸업논문 선수 택일 실험 MEC370 1개를 포함합니다. MEC370을 기계공학전공 전공필수의 자동 대체로 인정하지 않습니다.",
+    "지능로봇공학전공의 타전공 인정 과목표(PDF 16쪽)는 기계공학전공에 일괄 적용하지 않습니다.",
+    "관심 분야는 별표7의 디지털오픈배지 모듈입니다. 전공 인증·졸업 판정을 대신하지 않습니다."
+  ],
+  "requirements": {
+    "singleMajor": {
+      "total": 79,
+      "basic": 18,
+      "required": 9,
+      "elective": 52
+    },
+    "graduationCredits": 130,
+    "englishCourses": 3,
+    "softwareCredits": 6,
+    "note": "교양·영어강의·SW·논문 등 별도 조건이 있으며 이 화면은 졸업 판정기가 아닙니다. 지능로봇공학전공은 관련 3모듈 중 2개, 항공우주모빌리티전공 단일전공은 관련 4모듈 중 3개 등 추가 인증 조건이 있습니다."
+  },
+  "courses": [
+    {
+      "id": "AMTH1009",
+      "code": "AMTH1009",
+      "name": "미분적분학",
+      "credits": 3,
+      "category": "전공기초",
+      "recommendedSemester": 1,
+      "recommendedYears": [
+        1
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 1학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "APHY1000",
+      "code": "APHY1000",
+      "name": "물리학1",
+      "credits": 3,
+      "category": "전공기초",
+      "recommendedSemester": 1,
+      "recommendedYears": [
+        1
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 11,
+      "aliases": [
+        "물리학 1"
+      ],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 1학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "APCH1131",
+      "code": "APCH1131",
+      "name": "일반화학",
+      "credits": 3,
+      "category": "전공기초",
+      "recommendedSemester": 1,
+      "recommendedYears": [
+        1
+      ],
+      "offeredSemesters": [
+        1,
+        2
+      ],
+      "sourcePage": 11,
+      "aliases": [
+        "일반 화학"
+      ],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 1학년. 개설학기: 1학기, 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC102",
+      "code": "MEC102",
+      "name": "공학수학1",
+      "credits": 3,
+      "category": "전공기초",
+      "recommendedSemester": 2,
+      "recommendedYears": [
+        1
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 11,
+      "aliases": [
+        "공학수학 1"
+      ],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 1학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC104",
+      "code": "MEC104",
+      "name": "프로그래밍입문",
+      "credits": 3,
+      "category": "전공기초",
+      "recommendedSemester": 1,
+      "recommendedYears": [
+        1
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 1학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요. 별표5 구성표(PDF 29쪽)에는 2학년으로도 표기되지만 이 화면은 별표1의 1학년·1학기를 우선 표시합니다."
+    },
+    {
+      "id": "MEC202",
+      "code": "MEC202",
+      "name": "공학수학2",
+      "credits": 3,
+      "category": "전공기초",
+      "recommendedSemester": 3,
+      "recommendedYears": [
+        2
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 11,
+      "aliases": [
+        "공학수학 2"
+      ],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 2학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC100",
+      "code": "MEC100",
+      "name": "수학계획서",
+      "credits": 0,
+      "category": "전공필수",
+      "recommendedSemester": 1,
+      "recommendedYears": [
+        1
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 11,
+      "aliases": [
+        "수강계획서"
+      ],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 1학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC300",
+      "code": "MEC300",
+      "name": "기계공학윤강",
+      "credits": 1,
+      "category": "전공필수",
+      "recommendedSemester": 5,
+      "recommendedYears": [
+        3
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 3학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC306",
+      "code": "MEC306",
+      "name": "첨단기계공학실험",
+      "credits": 3,
+      "category": "전공필수",
+      "recommendedSemester": 5,
+      "recommendedYears": [
+        3
+      ],
+      "offeredSemesters": [
+        1,
+        2
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 3학년. 개설학기: 1학기, 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC305",
+      "code": "MEC305",
+      "name": "캡스톤디자인1(기계공학)",
+      "credits": 2,
+      "category": "전공필수",
+      "recommendedSemester": 6,
+      "recommendedYears": [
+        3
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 3학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요. 이수체계도(PDF 32쪽)는 3학년 2학기에 배치하지만 편성표는 3학년·1학기를 표시합니다. 학기별 개설은 학교 시간표로 확인하세요."
+    },
+    {
+      "id": "MEC405",
+      "code": "MEC405",
+      "name": "캡스톤디자인2(기계공학)",
+      "credits": 3,
+      "category": "전공필수",
+      "recommendedSemester": 7,
+      "recommendedYears": [
+        4
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 4학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC400",
+      "code": "MEC400",
+      "name": "졸업논문(기계공학)",
+      "credits": 0,
+      "category": "전공필수",
+      "recommendedSemester": 7,
+      "recommendedYears": [
+        4
+      ],
+      "offeredSemesters": [
+        1,
+        2
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 4학년. 개설학기: 1학기, 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC101",
+      "code": "MEC101",
+      "name": "디자인사고",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 2,
+      "recommendedYears": [
+        1,
+        2
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 1-2학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC105",
+      "code": "MEC105",
+      "name": "그래픽및공학설계",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 2,
+      "recommendedYears": [
+        1
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 1학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요. 별표5 구성표(PDF 29쪽)에는 2학년으로도 표기되지만 이 화면은 별표1의 1학년·2학기를 우선 표시합니다."
+    },
+    {
+      "id": "MEC220",
+      "code": "MEC220",
+      "name": "열역학",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 3,
+      "recommendedYears": [
+        2
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 2학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC221",
+      "code": "MEC221",
+      "name": "응용열역학",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 4,
+      "recommendedYears": [
+        2
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 2학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC230",
+      "code": "MEC230",
+      "name": "유체역학",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 4,
+      "recommendedYears": [
+        2
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 2학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC210",
+      "code": "MEC210",
+      "name": "재료역학",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 3,
+      "recommendedYears": [
+        2
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 2학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC211",
+      "code": "MEC211",
+      "name": "응용재료역학",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 4,
+      "recommendedYears": [
+        2
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 2학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC240",
+      "code": "MEC240",
+      "name": "동역학",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 4,
+      "recommendedYears": [
+        2
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 2학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC203",
+      "code": "MEC203",
+      "name": "공학수학3",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 4,
+      "recommendedYears": [
+        2
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 11,
+      "aliases": [
+        "공학수학 3"
+      ],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 2학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC204",
+      "code": "MEC204",
+      "name": "프로그래밍응용",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 3,
+      "recommendedYears": [
+        2
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 2학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC302",
+      "code": "MEC302",
+      "name": "수치해석",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 5,
+      "recommendedYears": [
+        3
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 3학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC303",
+      "code": "MEC303",
+      "name": "실험통계학",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 6,
+      "recommendedYears": [
+        3,
+        4
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 3-4학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC350",
+      "code": "MEC350",
+      "name": "기계요소설계",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 5,
+      "recommendedYears": [
+        3
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 3학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC352",
+      "code": "MEC352",
+      "name": "기계공작법",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 5,
+      "recommendedYears": [
+        3,
+        4
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 3-4학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC321",
+      "code": "MEC321",
+      "name": "열전달",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 5,
+      "recommendedYears": [
+        3
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 3학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC322",
+      "code": "MEC322",
+      "name": "냉동및공기조화",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 6,
+      "recommendedYears": [
+        3
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 3학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC320",
+      "code": "MEC320",
+      "name": "열에너지시스템",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 6,
+      "recommendedYears": [
+        3,
+        4
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 3-4학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC330",
+      "code": "MEC330",
+      "name": "응용유체역학",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 5,
+      "recommendedYears": [
+        3
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 3학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC331",
+      "code": "MEC331",
+      "name": "전산열유체공학",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 6,
+      "recommendedYears": [
+        3
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 3학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC311",
+      "code": "MEC311",
+      "name": "재료과학",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 5,
+      "recommendedYears": [
+        3
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 3학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC351",
+      "code": "MEC351",
+      "name": "유한요소법",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 6,
+      "recommendedYears": [
+        3
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 3학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC301",
+      "code": "MEC301",
+      "name": "설계방법론",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 6,
+      "recommendedYears": [
+        3
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 3학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC353",
+      "code": "MEC353",
+      "name": "지능형생산공학",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 6,
+      "recommendedYears": [
+        3,
+        4
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 11,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 11쪽. 편성 학년: 3-4학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC354",
+      "code": "MEC354",
+      "name": "생체공학",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 6,
+      "recommendedYears": [
+        3,
+        4
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 12,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 12쪽. 편성 학년: 3-4학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC341",
+      "code": "MEC341",
+      "name": "기계진동",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 5,
+      "recommendedYears": [
+        3
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 12,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 12쪽. 편성 학년: 3학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC310",
+      "code": "MEC310",
+      "name": "구조재료시스템",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 6,
+      "recommendedYears": [
+        3,
+        4
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 12,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 12쪽. 편성 학년: 3-4학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC340",
+      "code": "MEC340",
+      "name": "시스템동역학",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 5,
+      "recommendedYears": [
+        3
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 12,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 12쪽. 편성 학년: 3학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC380",
+      "code": "MEC380",
+      "name": "에너지변환공학",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 5,
+      "recommendedYears": [
+        3,
+        4
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 12,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 12쪽. 편성 학년: 3-4학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC381",
+      "code": "MEC381",
+      "name": "에너지동력공학",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 6,
+      "recommendedYears": [
+        3,
+        4
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 12,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 12쪽. 편성 학년: 3-4학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC312",
+      "code": "MEC312",
+      "name": "반도체소재및멤스",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 6,
+      "recommendedYears": [
+        3,
+        4
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 12,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 12쪽. 편성 학년: 3-4학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC430",
+      "code": "MEC430",
+      "name": "유체유동시스템",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 7,
+      "recommendedYears": [
+        4
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 12,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 12쪽. 편성 학년: 4학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC406",
+      "code": "MEC406",
+      "name": "전산역학",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 7,
+      "recommendedYears": [
+        4
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 12,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 12쪽. 편성 학년: 4학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC401",
+      "code": "MEC401",
+      "name": "제품설계및구현",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 8,
+      "recommendedYears": [
+        4
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 12,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 12쪽. 편성 학년: 4학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC391",
+      "code": "MEC391",
+      "name": "연구연수활동1(기계공학)",
+      "credits": 1,
+      "category": "전공선택",
+      "recommendedSemester": 5,
+      "recommendedYears": [
+        3,
+        4
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 12,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 12쪽. 편성 학년: 3-4학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC392",
+      "code": "MEC392",
+      "name": "연구연수활동2(기계공학)",
+      "credits": 1,
+      "category": "전공선택",
+      "recommendedSemester": 6,
+      "recommendedYears": [
+        3,
+        4
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 12,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 12쪽. 편성 학년: 3-4학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC393",
+      "code": "MEC393",
+      "name": "독립심화학습1(기계공학)",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 5,
+      "recommendedYears": [
+        3,
+        4
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 12,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 12쪽. 편성 학년: 3-4학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC394",
+      "code": "MEC394",
+      "name": "독립심화학습2(기계공학)",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 6,
+      "recommendedYears": [
+        3,
+        4
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 12,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 12쪽. 편성 학년: 3-4학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요."
+    },
+    {
+      "id": "MEC360",
+      "code": "MEC360",
+      "name": "AI로봇공학세미나",
+      "credits": 2,
+      "category": "전공선택",
+      "recommendedSemester": 5,
+      "recommendedYears": [
+        3
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 12,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 12쪽. 편성 학년: 3학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요. 기계공학부 내 다른 전공의 전공선택 과목으로, 기계공학전공 전공선택 인정 대상입니다(PDF 12~13쪽)."
+    },
+    {
+      "id": "MEC362",
+      "code": "MEC362",
+      "name": "메카트로닉스",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 5,
+      "recommendedYears": [
+        3,
+        4
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 12,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 12쪽. 편성 학년: 3-4학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요. 기계공학부 내 다른 전공의 전공선택 과목으로, 기계공학전공 전공선택 인정 대상입니다(PDF 12~13쪽)."
+    },
+    {
+      "id": "MEC361",
+      "code": "MEC361",
+      "name": "자동제어",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 6,
+      "recommendedYears": [
+        3
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 12,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 12쪽. 편성 학년: 3학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요. 기계공학부 내 다른 전공의 전공선택 과목으로, 기계공학전공 전공선택 인정 대상입니다(PDF 12~13쪽)."
+    },
+    {
+      "id": "MEC364",
+      "code": "MEC364",
+      "name": "로봇프로그래밍",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 6,
+      "recommendedYears": [
+        3
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 12,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 12쪽. 편성 학년: 3학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요. 기계공학부 내 다른 전공의 전공선택 과목으로, 기계공학전공 전공선택 인정 대상입니다(PDF 12~13쪽). 이수체계도(PDF 32쪽)는 3학년 2학기에 배치하지만 편성표는 3학년·1학기를 표시합니다. 로봇공학 선수조건과 함께 수강 시기를 확인하세요."
+    },
+    {
+      "id": "MEC363",
+      "code": "MEC363",
+      "name": "로봇공학",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 5,
+      "recommendedYears": [
+        3,
+        4
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 12,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 12쪽. 편성 학년: 3-4학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요. 기계공학부 내 다른 전공의 전공선택 과목으로, 기계공학전공 전공선택 인정 대상입니다(PDF 12~13쪽)."
+    },
+    {
+      "id": "MEC365",
+      "code": "MEC365",
+      "name": "머신러닝",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 6,
+      "recommendedYears": [
+        3
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 12,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 12쪽. 편성 학년: 3학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요. 기계공학부 내 다른 전공의 전공선택 과목으로, 기계공학전공 전공선택 인정 대상입니다(PDF 12~13쪽)."
+    },
+    {
+      "id": "MEC465",
+      "code": "MEC465",
+      "name": "강화학습",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 7,
+      "recommendedYears": [
+        4
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 12,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 12쪽. 편성 학년: 4학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요. 기계공학부 내 다른 전공의 전공선택 과목으로, 기계공학전공 전공선택 인정 대상입니다(PDF 12~13쪽)."
+    },
+    {
+      "id": "MEC370",
+      "code": "MEC370",
+      "name": "항공우주공학실험",
+      "credits": 3,
+      "category": "졸업논문 선수 택1",
+      "recommendedSemester": 5,
+      "recommendedYears": [
+        3
+      ],
+      "offeredSemesters": [
+        1,
+        2
+      ],
+      "sourcePage": 13,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 13쪽. 편성 학년: 3학년. 개설학기: 1학기, 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요. 항공우주모빌리티전공의 전공필수 과목입니다. 기계공학전공 전공필수의 자동 대체로 처리하지 않습니다. 졸업논문 선수조건에서 MEC306 또는 MEC370으로 명시되어 포함했습니다(PDF 15쪽)."
+    },
+    {
+      "id": "MEC270",
+      "code": "MEC270",
+      "name": "항공우주공학개론",
+      "credits": 2,
+      "category": "전공선택",
+      "recommendedSemester": 3,
+      "recommendedYears": [
+        2
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 13,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 13쪽. 편성 학년: 2학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요. 기계공학부 내 다른 전공의 전공선택 과목으로, 기계공학전공 전공선택 인정 대상입니다(PDF 12~13쪽)."
+    },
+    {
+      "id": "MEC273",
+      "code": "MEC273",
+      "name": "공기역학",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 3,
+      "recommendedYears": [
+        2
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 13,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 13쪽. 편성 학년: 2학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요. 기계공학부 내 다른 전공의 전공선택 과목으로, 기계공학전공 전공선택 인정 대상입니다(PDF 12~13쪽)."
+    },
+    {
+      "id": "MEC274",
+      "code": "MEC274",
+      "name": "압축성유체역학",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 4,
+      "recommendedYears": [
+        2
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 13,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 13쪽. 편성 학년: 2학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요. 기계공학부 내 다른 전공의 전공선택 과목으로, 기계공학전공 전공선택 인정 대상입니다(PDF 12~13쪽)."
+    },
+    {
+      "id": "MEC377",
+      "code": "MEC377",
+      "name": "항공기구조역학",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 5,
+      "recommendedYears": [
+        3
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 13,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 13쪽. 편성 학년: 3학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요. 기계공학부 내 다른 전공의 전공선택 과목으로, 기계공학전공 전공선택 인정 대상입니다(PDF 12~13쪽)."
+    },
+    {
+      "id": "MEC375",
+      "code": "MEC375",
+      "name": "비행역학",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 5,
+      "recommendedYears": [
+        3
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 13,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 13쪽. 편성 학년: 3학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요. 기계공학부 내 다른 전공의 전공선택 과목으로, 기계공학전공 전공선택 인정 대상입니다(PDF 12~13쪽)."
+    },
+    {
+      "id": "MEC371",
+      "code": "MEC371",
+      "name": "공기흡입추진",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 6,
+      "recommendedYears": [
+        3
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 13,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 13쪽. 편성 학년: 3학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요. 기계공학부 내 다른 전공의 전공선택 과목으로, 기계공학전공 전공선택 인정 대상입니다(PDF 12~13쪽)."
+    },
+    {
+      "id": "MEC373",
+      "code": "MEC373",
+      "name": "수직이착륙기공기역학",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 6,
+      "recommendedYears": [
+        3
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 13,
+      "aliases": [
+        "수직이착륙공기역학"
+      ],
+      "note": "별표1 교육과정 편성표, PDF 13쪽. 편성 학년: 3학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요. 기계공학부 내 다른 전공의 전공선택 과목으로, 기계공학전공 전공선택 인정 대상입니다(PDF 12~13쪽)."
+    },
+    {
+      "id": "MEC475",
+      "code": "MEC475",
+      "name": "비행제어",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 7,
+      "recommendedYears": [
+        4
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 13,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 13쪽. 편성 학년: 4학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요. 기계공학부 내 다른 전공의 전공선택 과목으로, 기계공학전공 전공선택 인정 대상입니다(PDF 12~13쪽)."
+    },
+    {
+      "id": "MEC471",
+      "code": "MEC471",
+      "name": "로켓추진",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 7,
+      "recommendedYears": [
+        4
+      ],
+      "offeredSemesters": [
+        1
+      ],
+      "sourcePage": 13,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 13쪽. 편성 학년: 4학년. 개설학기: 1학기. 실제 개설 여부는 학기별 시간표를 확인하세요. 기계공학부 내 다른 전공의 전공선택 과목으로, 기계공학전공 전공선택 인정 대상입니다(PDF 12~13쪽)."
+    },
+    {
+      "id": "MEC473",
+      "code": "MEC473",
+      "name": "비행체개념설계",
+      "credits": 3,
+      "category": "전공선택",
+      "recommendedSemester": 8,
+      "recommendedYears": [
+        4
+      ],
+      "offeredSemesters": [
+        2
+      ],
+      "sourcePage": 13,
+      "aliases": [],
+      "note": "별표1 교육과정 편성표, PDF 13쪽. 편성 학년: 4학년. 개설학기: 2학기. 실제 개설 여부는 학기별 시간표를 확인하세요. 기계공학부 내 다른 전공의 전공선택 과목으로, 기계공학전공 전공선택 인정 대상입니다(PDF 12~13쪽)."
+    }
+  ],
+  "tracks": [
+    {
+      "id": "module-1",
+      "name": "공학설계",
+      "badgeName": "Design Literacy",
+      "courseIds": [
+        "MEC101",
+        "MEC301",
+        "MEC401"
+      ],
+      "sourcePage": 36,
+      "note": "별표7 공식 디지털오픈배지 모듈, PDF 36쪽. 모듈 내 지정 과목을 모두 이수한 뒤 학교의 신청·수여 절차를 거쳐야 합니다."
+    },
+    {
+      "id": "module-2",
+      "name": "수학/프로그래밍",
+      "badgeName": "The Matrix",
+      "courseIds": [
+        "MEC204",
+        "MEC302",
+        "MEC303"
+      ],
+      "sourcePage": 36,
+      "note": "별표7 공식 디지털오픈배지 모듈, PDF 36쪽. 모듈 내 지정 과목을 모두 이수한 뒤 학교의 신청·수여 절차를 거쳐야 합니다."
+    },
+    {
+      "id": "module-3",
+      "name": "유체공학",
+      "badgeName": "Fluidic Engineering Literacy",
+      "courseIds": [
+        "MEC230",
+        "MEC330",
+        "MEC430"
+      ],
+      "sourcePage": 37,
+      "note": "별표7 공식 디지털오픈배지 모듈, PDF 37쪽. 모듈 내 지정 과목을 모두 이수한 뒤 학교의 신청·수여 절차를 거쳐야 합니다."
+    },
+    {
+      "id": "module-4",
+      "name": "열공학",
+      "badgeName": "Thermal Engineering Literacy",
+      "courseIds": [
+        "MEC220",
+        "MEC221",
+        "MEC321"
+      ],
+      "sourcePage": 37,
+      "note": "별표7 공식 디지털오픈배지 모듈, PDF 37쪽. 모듈 내 지정 과목을 모두 이수한 뒤 학교의 신청·수여 절차를 거쳐야 합니다."
+    },
+    {
+      "id": "module-5",
+      "name": "열시스템공학",
+      "badgeName": "Thermal System Literacy – Advanced",
+      "courseIds": [
+        "MEC320",
+        "MEC322",
+        "MEC380",
+        "MEC381"
+      ],
+      "sourcePage": 37,
+      "note": "별표7 공식 디지털오픈배지 모듈, PDF 37쪽. 모듈 내 지정 과목을 모두 이수한 뒤 학교의 신청·수여 절차를 거쳐야 합니다."
+    },
+    {
+      "id": "module-6",
+      "name": "재료역학",
+      "badgeName": "Solid Mechanics Literacy",
+      "courseIds": [
+        "MEC210",
+        "MEC211",
+        "MEC350"
+      ],
+      "sourcePage": 37,
+      "note": "별표7 공식 디지털오픈배지 모듈, PDF 37쪽. 모듈 내 지정 과목을 모두 이수한 뒤 학교의 신청·수여 절차를 거쳐야 합니다."
+    },
+    {
+      "id": "module-7",
+      "name": "전산해석",
+      "badgeName": "CAE Literacy",
+      "courseIds": [
+        "MEC351",
+        "MEC331",
+        "MEC406"
+      ],
+      "sourcePage": 37,
+      "note": "별표7 공식 디지털오픈배지 모듈, PDF 37쪽. 모듈 내 지정 과목을 모두 이수한 뒤 학교의 신청·수여 절차를 거쳐야 합니다."
+    },
+    {
+      "id": "module-8",
+      "name": "로봇공학",
+      "badgeName": "AI-Robotics Literacy",
+      "courseIds": [
+        "MEC363",
+        "MEC364",
+        "MEC361"
+      ],
+      "sourcePage": 38,
+      "note": "별표7 공식 디지털오픈배지 모듈, PDF 38쪽. 모듈 내 지정 과목을 모두 이수한 뒤 학교의 신청·수여 절차를 거쳐야 합니다."
+    },
+    {
+      "id": "module-9",
+      "name": "AI로봇공학",
+      "badgeName": "AI Robotics Literacy",
+      "courseIds": [
+        "MEC360",
+        "MEC302",
+        "MEC365",
+        "MEC465"
+      ],
+      "sourcePage": 38,
+      "note": "별표7 공식 디지털오픈배지 모듈, PDF 38쪽. 모듈 내 지정 과목을 모두 이수한 뒤 학교의 신청·수여 절차를 거쳐야 합니다."
+    },
+    {
+      "id": "module-10",
+      "name": "다물체동역학",
+      "badgeName": "Multibody Dynamics Literacy",
+      "courseIds": [
+        "MEC240",
+        "MEC351",
+        "MEC340"
+      ],
+      "sourcePage": 38,
+      "note": "별표7 공식 디지털오픈배지 모듈, PDF 38쪽. 모듈 내 지정 과목을 모두 이수한 뒤 학교의 신청·수여 절차를 거쳐야 합니다."
+    },
+    {
+      "id": "module-11",
+      "name": "공기역학",
+      "badgeName": "Aerodynamics Literacy",
+      "courseIds": [
+        "MEC273",
+        "MEC274",
+        "MEC373"
+      ],
+      "sourcePage": 38,
+      "note": "별표7 공식 디지털오픈배지 모듈, PDF 38쪽. 모듈 내 지정 과목을 모두 이수한 뒤 학교의 신청·수여 절차를 거쳐야 합니다."
+    },
+    {
+      "id": "module-12",
+      "name": "추진공학",
+      "badgeName": "Propulsion Literacy",
+      "courseIds": [
+        "MEC381",
+        "MEC430",
+        "MEC371",
+        "MEC471"
+      ],
+      "sourcePage": 38,
+      "note": "별표7 공식 디지털오픈배지 모듈, PDF 38쪽. 모듈 내 지정 과목을 모두 이수한 뒤 학교의 신청·수여 절차를 거쳐야 합니다."
+    },
+    {
+      "id": "module-13",
+      "name": "비행제어",
+      "badgeName": "Flight Control Literacy",
+      "courseIds": [
+        "MEC240",
+        "MEC375",
+        "MEC475"
+      ],
+      "sourcePage": 39,
+      "note": "별표7 공식 디지털오픈배지 모듈, PDF 39쪽. 모듈 내 지정 과목을 모두 이수한 뒤 학교의 신청·수여 절차를 거쳐야 합니다."
+    },
+    {
+      "id": "module-14",
+      "name": "비행체설계",
+      "badgeName": "Aircraft Design Literacy",
+      "courseIds": [
+        "MEC270",
+        "MEC273",
+        "MEC377",
+        "MEC473"
+      ],
+      "sourcePage": 39,
+      "note": "별표7 공식 디지털오픈배지 모듈, PDF 39쪽. 모듈 내 지정 과목을 모두 이수한 뒤 학교의 신청·수여 절차를 거쳐야 합니다."
+    }
+  ],
+  "prerequisiteGroups": [
+    {
+      "id": "prereq-1",
+      "target": "MEC102",
+      "options": [
+        "AMTH1009"
+      ],
+      "sourcePage": 14
+    },
+    {
+      "id": "prereq-2",
+      "target": "MEC220",
+      "options": [
+        "APCH1131"
+      ],
+      "sourcePage": 14
+    },
+    {
+      "id": "prereq-3",
+      "target": "MEC204",
+      "options": [
+        "MEC104"
+      ],
+      "sourcePage": 14
+    },
+    {
+      "id": "prereq-4",
+      "target": "MEC301",
+      "options": [
+        "MEC101"
+      ],
+      "sourcePage": 14
+    },
+    {
+      "id": "prereq-5",
+      "target": "MEC401",
+      "options": [
+        "MEC301"
+      ],
+      "sourcePage": 14
+    },
+    {
+      "id": "prereq-6",
+      "target": "MEC221",
+      "options": [
+        "MEC220"
+      ],
+      "sourcePage": 14
+    },
+    {
+      "id": "prereq-7",
+      "target": "MEC321",
+      "options": [
+        "MEC220"
+      ],
+      "sourcePage": 14
+    },
+    {
+      "id": "prereq-8",
+      "target": "MEC321",
+      "options": [
+        "MEC230",
+        "MEC273"
+      ],
+      "sourcePage": 14
+    },
+    {
+      "id": "prereq-9",
+      "target": "MEC330",
+      "options": [
+        "MEC230",
+        "MEC273"
+      ],
+      "sourcePage": 14
+    },
+    {
+      "id": "prereq-10",
+      "target": "MEC430",
+      "options": [
+        "MEC330",
+        "MEC274"
+      ],
+      "sourcePage": 14
+    },
+    {
+      "id": "prereq-11",
+      "target": "MEC211",
+      "options": [
+        "MEC210"
+      ],
+      "sourcePage": 14
+    },
+    {
+      "id": "prereq-12",
+      "target": "MEC350",
+      "options": [
+        "MEC211"
+      ],
+      "sourcePage": 14
+    },
+    {
+      "id": "prereq-13",
+      "target": "MEC310",
+      "options": [
+        "MEC210"
+      ],
+      "sourcePage": 14
+    },
+    {
+      "id": "prereq-14",
+      "target": "MEC310",
+      "options": [
+        "MEC211"
+      ],
+      "sourcePage": 14
+    },
+    {
+      "id": "prereq-15",
+      "target": "MEC351",
+      "options": [
+        "MEC210"
+      ],
+      "sourcePage": 14
+    },
+    {
+      "id": "prereq-16",
+      "target": "MEC351",
+      "options": [
+        "MEC211"
+      ],
+      "sourcePage": 14
+    },
+    {
+      "id": "prereq-17",
+      "target": "MEC312",
+      "options": [
+        "MEC311"
+      ],
+      "sourcePage": 14
+    },
+    {
+      "id": "prereq-18",
+      "target": "MEC312",
+      "options": [
+        "MEC211"
+      ],
+      "sourcePage": 14
+    },
+    {
+      "id": "prereq-19",
+      "target": "MEC331",
+      "options": [
+        "MEC302"
+      ],
+      "sourcePage": 14
+    },
+    {
+      "id": "prereq-20",
+      "target": "MEC365",
+      "options": [
+        "MEC302"
+      ],
+      "sourcePage": 14
+    },
+    {
+      "id": "prereq-21",
+      "target": "MEC465",
+      "options": [
+        "MEC365"
+      ],
+      "sourcePage": 14
+    },
+    {
+      "id": "prereq-22",
+      "target": "MEC406",
+      "options": [
+        "MEC302"
+      ],
+      "sourcePage": 14
+    },
+    {
+      "id": "prereq-23",
+      "target": "MEC406",
+      "options": [
+        "MEC321"
+      ],
+      "sourcePage": 14
+    },
+    {
+      "id": "prereq-24",
+      "target": "MEC341",
+      "options": [
+        "MEC240"
+      ],
+      "sourcePage": 14
+    },
+    {
+      "id": "prereq-25",
+      "target": "MEC362",
+      "options": [
+        "MEC240"
+      ],
+      "sourcePage": 15
+    },
+    {
+      "id": "prereq-26",
+      "target": "MEC361",
+      "options": [
+        "MEC240"
+      ],
+      "sourcePage": 15
+    },
+    {
+      "id": "prereq-27",
+      "target": "MEC340",
+      "options": [
+        "MEC240"
+      ],
+      "sourcePage": 15
+    },
+    {
+      "id": "prereq-28",
+      "target": "MEC363",
+      "options": [
+        "MEC240"
+      ],
+      "sourcePage": 15
+    },
+    {
+      "id": "prereq-29",
+      "target": "MEC373",
+      "options": [
+        "MEC273"
+      ],
+      "sourcePage": 15
+    },
+    {
+      "id": "prereq-30",
+      "target": "MEC371",
+      "options": [
+        "MEC221"
+      ],
+      "sourcePage": 15
+    },
+    {
+      "id": "prereq-31",
+      "target": "MEC371",
+      "options": [
+        "MEC330",
+        "MEC274"
+      ],
+      "sourcePage": 15
+    },
+    {
+      "id": "prereq-32",
+      "target": "MEC471",
+      "options": [
+        "MEC330",
+        "MEC274"
+      ],
+      "sourcePage": 15
+    },
+    {
+      "id": "prereq-33",
+      "target": "MEC377",
+      "options": [
+        "MEC211"
+      ],
+      "sourcePage": 15
+    },
+    {
+      "id": "prereq-34",
+      "target": "MEC375",
+      "options": [
+        "MEC240"
+      ],
+      "sourcePage": 15
+    },
+    {
+      "id": "prereq-35",
+      "target": "MEC475",
+      "options": [
+        "MEC375"
+      ],
+      "sourcePage": 15
+    },
+    {
+      "id": "prereq-36",
+      "target": "MEC473",
+      "options": [
+        "MEC273"
+      ],
+      "sourcePage": 15
+    },
+    {
+      "id": "prereq-37",
+      "target": "MEC400",
+      "options": [
+        "MEC306",
+        "MEC370"
+      ],
+      "sourcePage": 15
+    },
+    {
+      "id": "prereq-38",
+      "target": "MEC400",
+      "options": [
+        "MEC305"
+      ],
+      "sourcePage": 15
+    },
+    {
+      "id": "prereq-39",
+      "target": "MEC400",
+      "options": [
+        "MEC405"
+      ],
+      "sourcePage": 15
+    },
+    {
+      "id": "prereq-40",
+      "target": "MEC364",
+      "options": [
+        "MEC363"
+      ],
+      "sourcePage": 15
+    }
+  ],
+  "relations": [
+    {
+      "source": "AMTH1009",
+      "target": "MEC102",
+      "kind": "required",
+      "groupId": "prereq-1",
+      "anyOf": false,
+      "sourcePage": 14
+    },
+    {
+      "source": "APCH1131",
+      "target": "MEC220",
+      "kind": "required",
+      "groupId": "prereq-2",
+      "anyOf": false,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC104",
+      "target": "MEC204",
+      "kind": "required",
+      "groupId": "prereq-3",
+      "anyOf": false,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC101",
+      "target": "MEC301",
+      "kind": "required",
+      "groupId": "prereq-4",
+      "anyOf": false,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC301",
+      "target": "MEC401",
+      "kind": "required",
+      "groupId": "prereq-5",
+      "anyOf": false,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC220",
+      "target": "MEC221",
+      "kind": "required",
+      "groupId": "prereq-6",
+      "anyOf": false,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC220",
+      "target": "MEC321",
+      "kind": "required",
+      "groupId": "prereq-7",
+      "anyOf": false,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC230",
+      "target": "MEC321",
+      "kind": "required",
+      "groupId": "prereq-8",
+      "anyOf": true,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC273",
+      "target": "MEC321",
+      "kind": "required",
+      "groupId": "prereq-8",
+      "anyOf": true,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC230",
+      "target": "MEC330",
+      "kind": "required",
+      "groupId": "prereq-9",
+      "anyOf": true,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC273",
+      "target": "MEC330",
+      "kind": "required",
+      "groupId": "prereq-9",
+      "anyOf": true,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC330",
+      "target": "MEC430",
+      "kind": "required",
+      "groupId": "prereq-10",
+      "anyOf": true,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC274",
+      "target": "MEC430",
+      "kind": "required",
+      "groupId": "prereq-10",
+      "anyOf": true,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC210",
+      "target": "MEC211",
+      "kind": "required",
+      "groupId": "prereq-11",
+      "anyOf": false,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC211",
+      "target": "MEC350",
+      "kind": "required",
+      "groupId": "prereq-12",
+      "anyOf": false,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC210",
+      "target": "MEC310",
+      "kind": "required",
+      "groupId": "prereq-13",
+      "anyOf": false,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC211",
+      "target": "MEC310",
+      "kind": "required",
+      "groupId": "prereq-14",
+      "anyOf": false,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC210",
+      "target": "MEC351",
+      "kind": "required",
+      "groupId": "prereq-15",
+      "anyOf": false,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC211",
+      "target": "MEC351",
+      "kind": "required",
+      "groupId": "prereq-16",
+      "anyOf": false,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC311",
+      "target": "MEC312",
+      "kind": "required",
+      "groupId": "prereq-17",
+      "anyOf": false,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC211",
+      "target": "MEC312",
+      "kind": "required",
+      "groupId": "prereq-18",
+      "anyOf": false,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC302",
+      "target": "MEC331",
+      "kind": "required",
+      "groupId": "prereq-19",
+      "anyOf": false,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC302",
+      "target": "MEC365",
+      "kind": "required",
+      "groupId": "prereq-20",
+      "anyOf": false,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC365",
+      "target": "MEC465",
+      "kind": "required",
+      "groupId": "prereq-21",
+      "anyOf": false,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC302",
+      "target": "MEC406",
+      "kind": "required",
+      "groupId": "prereq-22",
+      "anyOf": false,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC321",
+      "target": "MEC406",
+      "kind": "required",
+      "groupId": "prereq-23",
+      "anyOf": false,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC240",
+      "target": "MEC341",
+      "kind": "required",
+      "groupId": "prereq-24",
+      "anyOf": false,
+      "sourcePage": 14
+    },
+    {
+      "source": "MEC240",
+      "target": "MEC362",
+      "kind": "required",
+      "groupId": "prereq-25",
+      "anyOf": false,
+      "sourcePage": 15
+    },
+    {
+      "source": "MEC240",
+      "target": "MEC361",
+      "kind": "required",
+      "groupId": "prereq-26",
+      "anyOf": false,
+      "sourcePage": 15
+    },
+    {
+      "source": "MEC240",
+      "target": "MEC340",
+      "kind": "required",
+      "groupId": "prereq-27",
+      "anyOf": false,
+      "sourcePage": 15
+    },
+    {
+      "source": "MEC240",
+      "target": "MEC363",
+      "kind": "required",
+      "groupId": "prereq-28",
+      "anyOf": false,
+      "sourcePage": 15
+    },
+    {
+      "source": "MEC273",
+      "target": "MEC373",
+      "kind": "required",
+      "groupId": "prereq-29",
+      "anyOf": false,
+      "sourcePage": 15
+    },
+    {
+      "source": "MEC221",
+      "target": "MEC371",
+      "kind": "required",
+      "groupId": "prereq-30",
+      "anyOf": false,
+      "sourcePage": 15
+    },
+    {
+      "source": "MEC330",
+      "target": "MEC371",
+      "kind": "required",
+      "groupId": "prereq-31",
+      "anyOf": true,
+      "sourcePage": 15
+    },
+    {
+      "source": "MEC274",
+      "target": "MEC371",
+      "kind": "required",
+      "groupId": "prereq-31",
+      "anyOf": true,
+      "sourcePage": 15
+    },
+    {
+      "source": "MEC330",
+      "target": "MEC471",
+      "kind": "required",
+      "groupId": "prereq-32",
+      "anyOf": true,
+      "sourcePage": 15
+    },
+    {
+      "source": "MEC274",
+      "target": "MEC471",
+      "kind": "required",
+      "groupId": "prereq-32",
+      "anyOf": true,
+      "sourcePage": 15
+    },
+    {
+      "source": "MEC211",
+      "target": "MEC377",
+      "kind": "required",
+      "groupId": "prereq-33",
+      "anyOf": false,
+      "sourcePage": 15
+    },
+    {
+      "source": "MEC240",
+      "target": "MEC375",
+      "kind": "required",
+      "groupId": "prereq-34",
+      "anyOf": false,
+      "sourcePage": 15
+    },
+    {
+      "source": "MEC375",
+      "target": "MEC475",
+      "kind": "required",
+      "groupId": "prereq-35",
+      "anyOf": false,
+      "sourcePage": 15
+    },
+    {
+      "source": "MEC273",
+      "target": "MEC473",
+      "kind": "required",
+      "groupId": "prereq-36",
+      "anyOf": false,
+      "sourcePage": 15
+    },
+    {
+      "source": "MEC306",
+      "target": "MEC400",
+      "kind": "required",
+      "groupId": "prereq-37",
+      "anyOf": true,
+      "sourcePage": 15
+    },
+    {
+      "source": "MEC370",
+      "target": "MEC400",
+      "kind": "required",
+      "groupId": "prereq-37",
+      "anyOf": true,
+      "sourcePage": 15
+    },
+    {
+      "source": "MEC305",
+      "target": "MEC400",
+      "kind": "required",
+      "groupId": "prereq-38",
+      "anyOf": false,
+      "sourcePage": 15
+    },
+    {
+      "source": "MEC405",
+      "target": "MEC400",
+      "kind": "required",
+      "groupId": "prereq-39",
+      "anyOf": false,
+      "sourcePage": 15
+    },
+    {
+      "source": "MEC363",
+      "target": "MEC364",
+      "kind": "required",
+      "groupId": "prereq-40",
+      "anyOf": false,
+      "sourcePage": 15
+    }
+  ]
+}
