@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {validateCatalog,emptyPlan,validatePlan,addCourse,removeCourse,layoutItems,moveCourse,semesterFromX,canConnect,planWarnings,planTotals,savePlan,loadPlan,storageKey} from '../src/roadmap/model.js';
+import {validateCatalog,emptyPlan,validatePlan,addCourse,removeCourse,layoutItems,alignSemesterColumns,moveCourse,semesterFromX,canConnect,planWarnings,planTotals,savePlan,loadPlan,storageKey} from '../src/roadmap/model.js';
 const catalog=validateCatalog({id:'uni-me-2026',university:'테스트 대학',department:'기계공학과',curriculumYear:2026,courses:[{id:'a',code:'C101',name:'일반화학',credits:3},{id:'b',code:'C201',name:'일반화학',credits:3},{id:'m',code:'M101',name:'공학수학',credits:null}],relations:[{source:'a',target:'b',kind:'required'}]});
 test('same course names remain distinct by course ID and code; duplicates are rejected',()=>{
  let p=emptyPlan(catalog);p=addCourse(p,catalog.courses[0]);p=addCourse(p,catalog.courses[1]);p=addCourse(p,catalog.courses[0]);assert.equal(p.items.length,2);
@@ -60,9 +60,9 @@ test('moving a first-semester course updates its assigned semester without chang
  assert.equal(moved.items.filter(i=>i.semester===1).length,0);assert.equal(moved.items.filter(i=>i.semester===2).reduce((n,i)=>n+byCode(i.courseId).credits,0),6);assert.equal(planTotals(moved,mechanical).credits,6);
  const values=new Map(),storage={getItem:k=>values.get(k),setItem:(k,v)=>values.set(k,v)};assert.ok(savePlan(moved,mechanical,'drag-test',storage));assert.equal(loadPlan(mechanical,'drag-test',storage).items[0].semester,2);
 });
-test('dragging respects nearby semester boundaries, avoids existing cards and stays within eight semesters',()=>{
+test('dragging snaps only to nearby semester columns and preserves the dropped vertical position',()=>{
  let p=actualPlan([['AMTH1009',1],['APHY1000',2]]);p.items=layoutItems(p.items);
- const moved=moveCourse(p,'AMTH1009',{x:310,y:75});assert.equal(moved.items[0].semester,2);assert.equal(moved.items[0].position.x,moved.items[1].position.x);assert.ok(moved.items[0].position.y>moved.items[1].position.y);
+ const moved=moveCourse(p,'AMTH1009',{x:310,y:75});assert.equal(moved.items[0].semester,2);assert.equal(moved.items[0].position.x,moved.items[1].position.x);assert.equal(moved.items[0].position.y,75);assert.deepEqual(moved.items[1],p.items[1]);
  assert.equal(semesterFromX(169),1);assert.equal(semesterFromX(171),2);assert.equal(moveCourse(p,'AMTH1009',{x:-900,y:-20}).items[0].semester,1);assert.equal(moveCourse(p,'AMTH1009',{x:6000,y:75}).items[0].semester,8);
  assert.equal(moveCourse(p,'AMTH1009',{x:NaN,y:75}),p);
 });
@@ -74,4 +74,14 @@ test('saved legacy cards gain room for inline controls without losing courses, s
  const legacy=actualPlan([['AMTH1009',1,'done'],['APHY1000',1],['APCH1131',2]]);delete legacy.layoutVersion;
  legacy.items=legacy.items.map((item,n)=>({...item,position:{x:item.semester===1?25:315,y:75+n*145}}));legacy.edges=[{source:'AMTH1009',target:'APHY1000'}];
  const migrated=validatePlan(legacy,mechanical);assert.equal(migrated.items[0].status,'done');assert.equal(migrated.items[1].position.y,285);assert.equal(migrated.items[2].semester,2);assert.deepEqual(migrated.edges,legacy.edges);assert.equal(planTotals(migrated,mechanical).credits,9);assert.deepEqual(validatePlan(migrated,mechanical),migrated);
+});
+
+test('a course can return to a gap in its original semester without being pushed below other courses',()=>{
+ let p=actualPlan([['AMTH1009',1],['APHY1000',1]]);p.items[0].position={x:25,y:75};p.items[1].position={x:25,y:350};
+ p=moveCourse(p,'AMTH1009',{x:320,y:123.25});assert.equal(p.items[0].semester,2);assert.equal(p.items[0].position.y,123.25);
+ const returned=moveCourse(p,'AMTH1009',{x:29,y:195.5});assert.equal(returned.items[0].semester,1);assert.deepEqual(returned.items[0].position,{x:25,y:195.5});assert.deepEqual(returned.items[1],p.items[1]);
+});
+test('manual column alignment and module additions retain existing vertical placement',()=>{
+ let p=actualPlan([['AMTH1009',1],['APHY1000',2]]);p.items[0].position={x:67,y:111.25};p.items[1].position={x:840,y:390};
+ p=addCourse(p,byCode('APCH1131'),1);const aligned=alignSemesterColumns(p.items);assert.deepEqual(aligned[0].position,{x:25,y:111.25});assert.deepEqual(aligned[1].position,{x:315,y:390});assert.equal(aligned[2].position.x,25);assert.ok(Number.isFinite(aligned[2].position.y));
 });
