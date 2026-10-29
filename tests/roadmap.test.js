@@ -69,3 +69,9 @@ test('dragging respects nearby semester boundaries, avoids existing cards and st
 test('a course with a second-semester recommendation can still be placed in the first semester',()=>{
  const p=moveCourse(actualPlan([['MEC102',2]]),'MEC102',{x:25,y:75});assert.equal(p.items[0].semester,1);assert.equal(layoutItems(p.items)[0].position.x,25);assert.deepEqual(byCode('MEC102').offeredSemesters,[2]);
 });
+
+test('saved legacy cards gain room for inline controls without losing courses, semesters or status; migration is stable',()=>{
+ const legacy=actualPlan([['AMTH1009',1,'done'],['APHY1000',1],['APCH1131',2]]);delete legacy.layoutVersion;
+ legacy.items=legacy.items.map((item,n)=>({...item,position:{x:item.semester===1?25:315,y:75+n*145}}));legacy.edges=[{source:'AMTH1009',target:'APHY1000'}];
+ const migrated=validatePlan(legacy,mechanical);assert.equal(migrated.items[0].status,'done');assert.equal(migrated.items[1].position.y,285);assert.equal(migrated.items[2].semester,2);assert.deepEqual(migrated.edges,legacy.edges);assert.equal(planTotals(migrated,mechanical).credits,9);assert.deepEqual(validatePlan(migrated,mechanical),migrated);
+});

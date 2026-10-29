@@ -1,6 +1,7 @@
 export const PLAN_VERSION=1;
+const LAYOUT_VERSION=2;
 export const courseKey=(catalog,course)=>`${catalog.id}:${course.id}`;
-export function emptyPlan(catalog){return {version:PLAN_VERSION,catalogId:catalog.id,items:[],edges:[]}}
+export function emptyPlan(catalog){return {version:PLAN_VERSION,layoutVersion:LAYOUT_VERSION,catalogId:catalog.id,items:[],edges:[]}}
 const text=(v,max=200)=>typeof v==='string'?v.trim().slice(0,max):'';
 const finite=v=>typeof v==='number'&&Number.isFinite(v);
 const page=v=>Number.isInteger(v)&&v>0&&v<=1000?v:null;
@@ -28,12 +29,13 @@ export function validatePlan(value,catalog){
  const known=new Set(catalog.courses.map(c=>c.id)),seen=new Set();
  const items=value.items.map(i=>{
   if(!i||!known.has(i.courseId)||seen.has(i.courseId)||!Number.isInteger(i.semester)||i.semester<1||i.semester>8)throw new Error('과목 또는 학기 정보가 올바르지 않습니다.');
-  seen.add(i.courseId);const position=i.position&&finite(i.position.x)&&finite(i.position.y)&&Math.abs(i.position.x)<100000&&Math.abs(i.position.y)<100000?{x:i.position.x,y:i.position.y}:null;
+  seen.add(i.courseId);let position=i.position&&finite(i.position.x)&&finite(i.position.y)&&Math.abs(i.position.x)<100000&&Math.abs(i.position.y)<100000?{x:i.position.x,y:i.position.y}:null;
+  if(position&&value.layoutVersion!==LAYOUT_VERSION)position={...position,y:Math.min(99999,Math.max(75,75+(position.y-75)*210/145))};
   return {courseId:i.courseId,semester:i.semester,status:['planned','taking','done'].includes(i.status)?i.status:'planned',position};
  });
  const official=catalog.relations.filter(r=>seen.has(r.source)&&seen.has(r.target));
  const edges=[];for(const e of (Array.isArray(value.edges)?value.edges:[]).slice(0,3000))if(e&&seen.has(e.source)&&seen.has(e.target)&&canConnect([...official,...edges],e.source,e.target))edges.push({source:e.source,target:e.target});
- return {version:PLAN_VERSION,catalogId:catalog.id,items,edges};
+ return {version:PLAN_VERSION,layoutVersion:LAYOUT_VERSION,catalogId:catalog.id,items,edges};
 }
 export function canConnect(edges,source,target){
  if(!source||!target||source===target||edges.some(e=>e.source===source&&e.target===target))return false;
@@ -46,7 +48,7 @@ export function addCourse(plan,course,semester=course.recommendedSemester||1){
 export function removeCourse(plan,id){return {...plan,items:plan.items.filter(i=>i.courseId!==id),edges:plan.edges.filter(e=>e.source!==id&&e.target!==id)}}
 export function layoutItems(items){const counts={};return items.map(i=>({...i,position:{x:(i.semester-1)*SEMESTER_LAYOUT.columnWidth+SEMESTER_LAYOUT.columnX,y:SEMESTER_LAYOUT.firstRowY+((counts[i.semester]=(counts[i.semester]||0)+1)-1)*SEMESTER_LAYOUT.rowHeight}}))}
 // Shared column geometry keeps drag snapping and semester headings aligned.
-export const SEMESTER_LAYOUT={columnWidth:290,columnX:25,rowHeight:145,firstRowY:75};
+export const SEMESTER_LAYOUT={columnWidth:290,columnX:25,rowHeight:210,firstRowY:75};
 export function semesterFromX(x){return Math.max(1,Math.min(8,Math.round((x-SEMESTER_LAYOUT.columnX)/SEMESTER_LAYOUT.columnWidth)+1))}
 export function moveCourse(plan,id,position){
  if(!plan.items.some(i=>i.courseId===id)||!finite(position?.x)||!finite(position?.y))return plan;
