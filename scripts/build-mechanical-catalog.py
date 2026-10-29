@@ -49,9 +49,7 @@ courses['APHY1000']['aliases']=['물리학 1']
 for code in ['MEC102','MEC202','MEC203']:courses[code]['aliases']=[courses[code]['name'].replace('수학','수학 ')]
 notes={
 'MEC105':'별표5 구성표(PDF 29쪽)에는 2학년으로도 표기되지만 이 화면은 별표1의 1학년·2학기를 우선 표시합니다.',
-'MEC104':'별표5 구성표(PDF 29쪽)에는 2학년으로도 표기되지만 이 화면은 별표1의 1학년·1학기를 우선 표시합니다.',
-'MEC305':'이수체계도(PDF 32쪽)는 3학년 2학기에 배치하지만 편성표는 3학년·1학기를 표시합니다. 학기별 개설은 학교 시간표로 확인하세요.',
-'MEC364':'이수체계도(PDF 32쪽)는 3학년 2학기에 배치하지만 편성표는 3학년·1학기를 표시합니다. 로봇공학 선수조건과 함께 수강 시기를 확인하세요.'}
+'MEC104':'별표5 구성표(PDF 29쪽)에는 2학년으로도 표기되지만 이 화면은 별표1의 1학년·1학기를 우선 표시합니다.'}
 for code,note in notes.items():courses[code]['note']+=' '+note
 relations=[{'source':s,'target':g['target'],'kind':'required','groupId':g['id'],'anyOf':len(g['options'])>1,'sourcePage':g['sourcePage']} for g in groups for s in g['options']]
 assert len(courses)==67,len(courses)

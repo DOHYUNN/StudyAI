@@ -33,7 +33,7 @@ const byCode=code=>mechanical.courses.find(c=>c.code===code);
 function actualPlan(entries){let p=emptyPlan(mechanical);for(const [code,semester,status='planned']of entries){p=addCourse(p,byCode(code),semester);p.items.at(-1).status=status}return p}
 test('2026 PDF catalog has exact code identities, zero-credit requirements and fourteen source modules',()=>{
  assert.equal(mechanical.courses.length,67);assert.equal(mechanical.tracks.length,14);assert.equal(mechanical.prerequisiteGroups.length,40);assert.equal(mechanical.relations.length,46);
- assert.equal(byCode('APCH1131').name,'일반화학');assert.equal(byCode('APHY1000').name,'물리학1');assert.equal(byCode('MEC100').credits,0);assert.deepEqual(byCode('MEC102').offeredSemesters,[2]);
+ assert.equal(byCode('APCH1131').name,'일반화학');assert.equal(byCode('APHY1000').name,'물리학1');assert.equal(byCode('MEC100').credits,0);assert.deepEqual(byCode('MEC102').offeredSemesters,[2]);assert.deepEqual(byCode('MEC305').offeredSemesters,[2]);assert.deepEqual(byCode('MEC364').offeredSemesters,[2]);assert.deepEqual(byCode('MEC405').offeredSemesters,[1]);assert.ok(!byCode('MEC364').note.includes('편성표는 3학년·1학기'));
  assert.equal(mechanical.courses.filter(c=>c.category==='전공기초').reduce((n,c)=>n+c.credits,0),18);assert.equal(mechanical.courses.filter(c=>c.category==='전공필수').reduce((n,c)=>n+c.credits,0),9);
  assert.equal(byCode('MEC370').category,'졸업논문 선수 택1');assert.ok(!byCode('IE215'));assert.equal(mechanical.tracks.find(t=>t.name==='로봇공학').courseIds.length,3);
 });
