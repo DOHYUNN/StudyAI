@@ -44,7 +44,18 @@ export function addCourse(plan,course,semester=course.recommendedSemester||1){
  return {...plan,items:[...plan.items,{courseId:course.id,semester,status:'planned',position:null}]};
 }
 export function removeCourse(plan,id){return {...plan,items:plan.items.filter(i=>i.courseId!==id),edges:plan.edges.filter(e=>e.source!==id&&e.target!==id)}}
-export function layoutItems(items){const counts={};return items.map(i=>({...i,position:{x:(i.semester-1)*290+25,y:75+(counts[i.semester]=(counts[i.semester]||0)+1)*145-145}}))}
+export function layoutItems(items){const counts={};return items.map(i=>({...i,position:{x:(i.semester-1)*SEMESTER_LAYOUT.columnWidth+SEMESTER_LAYOUT.columnX,y:SEMESTER_LAYOUT.firstRowY+((counts[i.semester]=(counts[i.semester]||0)+1)-1)*SEMESTER_LAYOUT.rowHeight}}))}
+// Shared column geometry keeps drag snapping and semester headings aligned.
+export const SEMESTER_LAYOUT={columnWidth:290,columnX:25,rowHeight:145,firstRowY:75};
+export function semesterFromX(x){return Math.max(1,Math.min(8,Math.round((x-SEMESTER_LAYOUT.columnX)/SEMESTER_LAYOUT.columnWidth)+1))}
+export function moveCourse(plan,id,position){
+ if(!plan.items.some(i=>i.courseId===id)||!finite(position?.x)||!finite(position?.y))return plan;
+ const semester=semesterFromX(position.x),{columnWidth,columnX,rowHeight,firstRowY}=SEMESTER_LAYOUT;
+ const fallback=new Map(layoutItems(plan.items).map(i=>[i.courseId,i.position]));
+ const occupied=new Set(plan.items.filter(i=>i.courseId!==id&&i.semester===semester).map(i=>Math.max(0,Math.round(((i.position||fallback.get(i.courseId)).y-firstRowY)/rowHeight))));
+ let row=Math.max(0,Math.round((position.y-firstRowY)/rowHeight));while(occupied.has(row))row++;
+ return {...plan,items:plan.items.map(i=>i.courseId===id?{...i,semester,position:{x:(semester-1)*columnWidth+columnX,y:firstRowY+row*rowHeight}}:i)};
+}
 export function planWarnings(plan,catalog){
  const byId=new Map(plan.items.map(i=>[i.courseId,i])),lookup=new Map(catalog.courses.map(c=>[c.id,c])),warnings=[];
  const groups=catalog.prerequisiteGroups||catalog.relations.filter(r=>r.kind==='required').map((r,i)=>({id:`legacy-${i}`,target:r.target,options:[r.source]}));

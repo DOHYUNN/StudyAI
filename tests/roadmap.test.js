@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {validateCatalog,emptyPlan,validatePlan,addCourse,removeCourse,layoutItems,canConnect,planWarnings,planTotals,savePlan,loadPlan,storageKey} from '../src/roadmap/model.js';
+import {validateCatalog,emptyPlan,validatePlan,addCourse,removeCourse,layoutItems,moveCourse,semesterFromX,canConnect,planWarnings,planTotals,savePlan,loadPlan,storageKey} from '../src/roadmap/model.js';
 const catalog=validateCatalog({id:'uni-me-2026',university:'테스트 대학',department:'기계공학과',curriculumYear:2026,courses:[{id:'a',code:'C101',name:'일반화학',credits:3},{id:'b',code:'C201',name:'일반화학',credits:3},{id:'m',code:'M101',name:'공학수학',credits:null}],relations:[{source:'a',target:'b',kind:'required'}]});
 test('same course names remain distinct by course ID and code; duplicates are rejected',()=>{
  let p=emptyPlan(catalog);p=addCourse(p,catalog.courses[0]);p=addCourse(p,catalog.courses[1]);p=addCourse(p,catalog.courses[0]);assert.equal(p.items.length,2);
@@ -51,4 +51,21 @@ test('graduation-paper prerequisite experiment is an alternative; both capstones
 });
 test('imported custom edges cannot reverse or duplicate official prerequisite links',()=>{
  const p=actualPlan([['AMTH1009',1],['MEC102',2]]);p.edges=[{source:'MEC102',target:'AMTH1009'},{source:'AMTH1009',target:'MEC102'}];assert.deepEqual(validatePlan(p,mechanical).edges,[]);
+});
+
+test('moving a first-semester course updates its assigned semester without changing the recommendation',()=>{
+ const c=byCode('AMTH1009');let p=actualPlan([['AMTH1009',1],['APHY1000',2]]);p.items[0].status='taking';p.edges=[{source:'AMTH1009',target:'APHY1000'}];
+ const moved=moveCourse(p,'AMTH1009',{x:300,y:80});
+ assert.equal(moved.items[0].semester,2);assert.equal(moved.items[0].status,'taking');assert.equal(c.recommendedSemester,1);assert.deepEqual(moved.edges,p.edges);
+ assert.equal(moved.items.filter(i=>i.semester===1).length,0);assert.equal(moved.items.filter(i=>i.semester===2).reduce((n,i)=>n+byCode(i.courseId).credits,0),6);assert.equal(planTotals(moved,mechanical).credits,6);
+ const values=new Map(),storage={getItem:k=>values.get(k),setItem:(k,v)=>values.set(k,v)};assert.ok(savePlan(moved,mechanical,'drag-test',storage));assert.equal(loadPlan(mechanical,'drag-test',storage).items[0].semester,2);
+});
+test('dragging respects nearby semester boundaries, avoids existing cards and stays within eight semesters',()=>{
+ let p=actualPlan([['AMTH1009',1],['APHY1000',2]]);p.items=layoutItems(p.items);
+ const moved=moveCourse(p,'AMTH1009',{x:310,y:75});assert.equal(moved.items[0].semester,2);assert.equal(moved.items[0].position.x,moved.items[1].position.x);assert.ok(moved.items[0].position.y>moved.items[1].position.y);
+ assert.equal(semesterFromX(169),1);assert.equal(semesterFromX(171),2);assert.equal(moveCourse(p,'AMTH1009',{x:-900,y:-20}).items[0].semester,1);assert.equal(moveCourse(p,'AMTH1009',{x:6000,y:75}).items[0].semester,8);
+ assert.equal(moveCourse(p,'AMTH1009',{x:NaN,y:75}),p);
+});
+test('a course with a second-semester recommendation can still be placed in the first semester',()=>{
+ const p=moveCourse(actualPlan([['MEC102',2]]),'MEC102',{x:25,y:75});assert.equal(p.items[0].semester,1);assert.equal(layoutItems(p.items)[0].position.x,25);assert.deepEqual(byCode('MEC102').offeredSemesters,[2]);
 });
