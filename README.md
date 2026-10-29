@@ -50,11 +50,11 @@ GitHub `DOHYUNN/StudyAI` 저장소에 이 폴더의 내용을 저장소 루트�
 
 ## Supabase 연결
 
-1. Free 프로젝트를 준비하고 `supabase/schema.sql`을 SQL Editor에서 한 번 실행합니다.
-2. Auth 설정에서 Anonymous Sign-ins를 활성화합니다. 공개 운영 전 익명 가입 남용을 방지할 CAPTCHA/접근 제어를 추가하는 것이 필요합니다.
-3. 공개 URL과 anon/publishable key를 `.env.example`에 안내된 `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` 빌드 변수로 설정합니다.
-4. 학습 설정 화면에서 수동 저장/불러오기를 사용합니다. 첫 저장 또는 실제 AI 질문 시 익명 계정을 생성합니다. 각 사용자는 RLS를 통해 본인 기록만 접근합니다.
-5. 익명 계정은 같은 브라우저에서만 이어집니다. 브라우저 데이터를 지우면 복구가 어려우므로 정식 로그인/계정 복구는 추후 구현해야 합니다. 클라우드 저장/불러오기는 학습 설정에만 적용되며 대화를 포함하거나 복원하지 않습니다.
+1. Supabase Free 프로젝트의 공개 URL과 publishable key를 `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`에 설정합니다. 기존 공개 anon key 변수도 지원합니다.
+2. Google OAuth 클라이언트를 Supabase Auth의 Google 제공자에 연결하고 활성화합니다. Google Client Secret은 Supabase에만 보관합니다. `VITE_AUTH_PROVIDERS=google`을 설정하고 재배포합니다.
+3. Site URL 및 허용된 로그인 복귀 주소는 아래 소셜 로그인 절차를 따릅니다. 자동 익명 계정 생성은 사용하지 않습니다.
+4. 선택 기능인 클라우드 학습 설정 저장은 `supabase/schema.sql`을 적용하고 사용자별 RLS를 확인한 뒤 `VITE_PROFILE_SYNC_ENABLED=true`로 별도 활성화합니다. 기본값은 비활성화입니다.
+5. 로그인 세션만 유지하며 대화·첨부 파일·LearningX 토큰은 영구 저장하지 않습니다. 클라우드 저장/불러오기에도 대화는 포함하지 않습니다.
 
 ## ChatKHU 연결
 
@@ -76,7 +76,7 @@ AI 채팅은 Supabase나 별도 접속 암호 없이 Cloudflare Turnstile 사용
 
 `/api/config`는 공개 사이트 키, 준비 여부와 제공업체 이름만 반환합니다. Gateway 요청에는 공식 오류 가이드에서 요구하는 비어 있지 않은 User-Agent를 함께 보냅니다. `/api/chat`은 Turnstile 검증 후 학교 Gateway에 요청합니다. 이전 환경에서는 접속 암호 쿠키 또는 Supabase 세션 검증도 지원합니다. 설정의 AI 연결 확인 버튼은 Turnstile 검증 및 모델 목록 GET만 수행하며 generateContent를 호출하지 않습니다. 크레딧 부족(402), 요청 한도(429), 인증 실패 등은 오류를 표시하고 재시도하지 않습니다. 최근 대화 8개와 현재 질문만 전달하고 답변 출력은 기본 최대 512 토큰으로 제한합니다. `CHATKHU_MAX_OUTPUT_TOKENS`로 64~1,800 사이에서 변경할 수 있습니다. 이 값은 출력 한도이며 입력 및 추론 토큰까지 합친 전체 사용량 보장이 아닙니다. 사용자의 테스트 제한에 따라 실제 모델 생성 테스트는 실행하지 않습니다. 인증 및 모의 응답 테스트만 수행합니다. **이 제한과 확인 변수는 계정의 결제 상태나 남은 크레딧을 자동 검증하지 않습니다.** 잔액 자동 조회 및 사용자별 사용량 제한은 후속 작업입니다.
 
-`npm run dev`는 UI와 데모 검사용이며 Pages Functions는 실행하지 않습니다. 전체 로컬 연동 검증은 Cloudflare Pages 로컬 개발 환경에서 실행해야 합니다. 모의 API 응답으로 인증 헤더, 파일 전달, 답변 처리, 한도 오류 중단을 검증했습니다. 실제 키가 없어 학교 Gateway 및 Supabase의 실호출은 아직 검증하지 않았습니다.
+`npm run dev`는 UI와 데모 검사용이며 Pages Functions는 실행하지 않습니다. 전체 로컬 연동 검증은 Cloudflare Pages 로컬 개발 환경에서 실행해야 합니다. 모의 API 응답으로 인증 헤더, 파일 전달, 답변 처리, 한도 오류 중단을 검증했습니다. ChatKHU 키와 모델 메타데이터 확인 및 실제 Canvas 과제 조회, Supabase Google OAuth 로그인·로그아웃·재로그인을 검증했습니다. 실제 AI 답변 생성 테스트는 실행하지 않았습니다. Vite에서는 `/api/canvas` 로컬 조회 브리지만 별도로 동작합니다.
 
 ## 공식 문서
 
@@ -112,10 +112,12 @@ Pages: 서버 환경 변수 `CANVAS_OWNER_ID`를 본인 Canvas 사용자 ID로 �
 
 현재 구현은 제작자 자신의 토큰을 사용하는 개인 테스트 전용입니다. 다른 학생에게 수동 발급 토큰을 수집하는 서비스로 제공하면 안 되며, 다중 사용자 지원은 학교 승인 OAuth 연동으로 전환해야 합니다. [Canvas OAuth 안내](https://developerdocs.instructure.com/services/canvas/oauth2/file.oauth)
 
-### 소셜 로그인 준비
+### Google 소셜 로그인
 
 로그인 화면은 Google만 지원하며, Supabase 제공자 설정이 끝난 후 `VITE_AUTH_PROVIDERS=google`로 활성화합니다. `VITE_SUPABASE_URL`과 `VITE_SUPABASE_PUBLISHABLE_KEY`(또는 기존 공개 anon 키)를 Pages의 빌드 환경 변수에 설정한 후 재배포합니다. `service_role`, secret 키, Google Client Secret은 프런트엔드 변수에 절대 입력하지 않습니다.
 
 Supabase Auth의 Site URL은 `https://studyai-9ju.pages.dev`로 지정하고, Redirect URLs에는 `https://studyai-9ju.pages.dev/`와 사용하는 로컬 주소만 허용합니다. Google OAuth 리디렉션 주소에는 Supabase에서 보여 주는 `https://<project-ref>.supabase.co/auth/v1/callback`을 등록하고, 제공자 클라이언트 정보는 Supabase Auth 설정에만 입력합니다. PKCE 흐름으로 로그인하며 추가 Google 서비스 권한을 요청하지 않습니다.
 
 로그인 유지에는 Supabase 인증 세션을 사용하지만 대화·첨부 파일·LearningX 토큰은 저장하지 않습니다. 로그아웃 시 현재 대화와 LearningX 임시 연결을 초기화합니다. 학습 목표·진도·저장한 자료는 `supabase/schema.sql` 적용과 본인 데이터만 접근하는 RLS 확인 후 `VITE_PROFILE_SYNC_ENABLED=true`로 따로 활성화합니다. 이후 로그인한 사용자가 직접 저장/불러오기를 선택할 때만 `study_profiles` 테이블에 기록합니다. 자동 익명 계정 생성은 중단했습니다. 현재 소셜 로그인은 학교 계정 인증이나 다중 사용자 LearningX OAuth를 대신하지 않습니다.
+
+2026-10-29 배포에서 Google 최초 동의, StudyAI 계정 표시, 로그아웃 후 세션 해제, 재로그인 및 새로고침 후 로그인 유지를 확인했습니다. 동의 화면에는 기본 Supabase 프로젝트 도메인이 표시될 수 있습니다.
