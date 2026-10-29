@@ -100,7 +100,7 @@ Google 문서: https://ai.google.dev/gemini-api/docs/document-processing
 
 ## 대화 보관 정책
 
-이 웹사이트는 로그인 없는 임시 대화 방식입니다. 대화와 확인한 이해도, 입력 중 질문 및 첨부 내역은 localStorage/sessionStorage/Supabase에 저장하지 않습니다. 이전 버전이 브라우저에 남긴 대화 데이터는 접속 시 설정 데이터에서 제거합니다. 학습 과목 선택, 진도, 저장한 자료 및 목표는 대화와 분리해 유지합니다. 로고로 새 대화를 시작하거나 페이지에서 이탈하면 과목별 대화 전체와 첨부 메모리를 비웁니다. 진행 중 응답 또는 파일 읽기가 늦게 완료되어도 새 대화에 반영하지 않습니다. 브라우저 뒤로가기로 복원되는 경우에도 대화를 초기화합니다.
+이 웹사이트의 대화는 로그인 여부와 관계없이 임시 대화 방식입니다. 대화와 확인한 이해도, 입력 중 질문 및 첨부 내역은 localStorage/sessionStorage/Supabase에 저장하지 않습니다. 이전 버전이 브라우저에 남긴 대화 데이터는 접속 시 설정 데이터에서 제거합니다. 학습 과목 선택, 진도, 저장한 자료 및 목표는 대화와 분리해 유지합니다. 로고로 새 대화를 시작하거나 페이지에서 이탈하면 과목별 대화 전체와 첨부 메모리를 비웁니다. 진행 중 응답 또는 파일 읽기가 늦게 완료되어도 새 대화에 반영하지 않습니다. 브라우저 뒤로가기로 복원되는 경우에도 대화를 초기화합니다.
 
 ### 개인 LearningX 연동
 
@@ -111,3 +111,11 @@ Google 문서: https://ai.google.dev/gemini-api/docs/document-processing
 Pages: 서버 환경 변수 `CANVAS_OWNER_ID`를 본인 Canvas 사용자 ID로 설정해야 합니다. 사이트에서 본인의 LearningX 토큰을 접속마다 직접 입력합니다. 서버는 전달된 토큰의 소유자를 확인하고 일치하는 경우에만 조회하며, 공용 서버 토큰을 사용하지 않습니다. 토큰·과제는 메모리에만 두며 새로고침, 페이지 이탈, 로고 클릭, 연결 해제 시 지웁니다. 과제 조회 결과는 캐시하지 않습니다. 학교 원문 페이지는 학교 로그인이 필요할 수 있습니다.
 
 현재 구현은 제작자 자신의 토큰을 사용하는 개인 테스트 전용입니다. 다른 학생에게 수동 발급 토큰을 수집하는 서비스로 제공하면 안 되며, 다중 사용자 지원은 학교 승인 OAuth 연동으로 전환해야 합니다. [Canvas OAuth 안내](https://developerdocs.instructure.com/services/canvas/oauth2/file.oauth)
+
+### 소셜 로그인 준비
+
+로그인 화면은 Google만 지원하며, Supabase 제공자 설정이 끝난 후 `VITE_AUTH_PROVIDERS=google`로 활성화합니다. `VITE_SUPABASE_URL`과 `VITE_SUPABASE_PUBLISHABLE_KEY`(또는 기존 공개 anon 키)를 Pages의 빌드 환경 변수에 설정한 후 재배포합니다. `service_role`, secret 키, Google Client Secret은 프런트엔드 변수에 절대 입력하지 않습니다.
+
+Supabase Auth의 Site URL은 `https://studyai-9ju.pages.dev`로 지정하고, Redirect URLs에는 `https://studyai-9ju.pages.dev/`와 사용하는 로컬 주소만 허용합니다. Google OAuth 리디렉션 주소에는 Supabase에서 보여 주는 `https://<project-ref>.supabase.co/auth/v1/callback`을 등록하고, 제공자 클라이언트 정보는 Supabase Auth 설정에만 입력합니다. PKCE 흐름으로 로그인하며 추가 Google 서비스 권한을 요청하지 않습니다.
+
+로그인 유지에는 Supabase 인증 세션을 사용하지만 대화·첨부 파일·LearningX 토큰은 저장하지 않습니다. 로그아웃 시 현재 대화와 LearningX 임시 연결을 초기화합니다. 학습 목표·진도·저장한 자료는 `supabase/schema.sql` 적용과 본인 데이터만 접근하는 RLS 확인 후 `VITE_PROFILE_SYNC_ENABLED=true`로 따로 활성화합니다. 이후 로그인한 사용자가 직접 저장/불러오기를 선택할 때만 `study_profiles` 테이블에 기록합니다. 자동 익명 계정 생성은 중단했습니다. 현재 소셜 로그인은 학교 계정 인증이나 다중 사용자 LearningX OAuth를 대신하지 않습니다.
