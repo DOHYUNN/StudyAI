@@ -3,7 +3,7 @@ const key='studyai-v1';
 export function preferencesOnly(value){
  if(!value||typeof value!=='object'||Array.isArray(value))return {};
  const result={};
- for(const field of ['selected','progress','saved','goal'])if(Object.hasOwn(value,field))result[field]=value[field];
+ for(const field of ['selected','progress','goal'])if(Object.hasOwn(value,field))result[field]=value[field];
  return result;
 }
 export function readPreferences(provided){
@@ -12,7 +12,7 @@ export function readPreferences(provided){
   const raw=storage.getItem(key);if(!raw)return {};
   let value;try{value=JSON.parse(raw)}catch{storage.removeItem(key);return {}}
   const preferences=preferencesOnly(value);
-  // Remove conversation data left by older versions as soon as this app loads.
+  // Drop retired bookmarks and conversation data left by older versions.
   try{storage.setItem(key,JSON.stringify(preferences))}catch{}
   return preferences;
  }catch{return {}}

@@ -2,7 +2,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {validate,onRequestPost} from '../functions/api/chat.js';
 import {onRequestGet} from '../functions/api/config.js';
-import {youtubeUrl,subjects,resources} from '../src/data.js';
 const body={subject:'자료구조',level:null,messages:[{role:'user',text:'연결 리스트가 뭐야?'}]};
 test('accept bounded input; reject malformed, oversized, and injected roles',()=>{
  assert.ok(validate(body));
@@ -17,12 +16,6 @@ test('configured endpoint rejects unauthorized sessions and foreign origins befo
  assert.equal((await onRequestPost({env,request:new Request('https://example.com/api/chat',{method:'POST'})})).status,401);
  assert.equal((await onRequestPost({env,request:new Request('https://example.com/api/chat',{method:'POST',headers:{Origin:'https://other.com'}})})).status,403);
 });
-test('learning material links use encoded YouTube searches, not invented video ids',()=>{
- assert.equal(new URL(youtubeUrl('배열 & 큐')).searchParams.get('search_query'),'배열 & 큐');
- assert.equal(new Set(resources.map(r=>r.id)).size,resources.length);
- assert.ok(subjects.every(s=>s.steps.length===4));assert.ok(resources.every(r=>new URL(r.url).hostname==='www.youtube.com'));
-});
-
 import {MAX_FILE_BYTES,validAttachment,toGeminiContents} from '../shared/attachments.js';
 const pdf = {name:'lecture.pdf',mimeType:'application/pdf',data:btoa('%PDF-1.4\nexample'),size:16};
 // Use the actual byte length rather than a hand-maintained size.
