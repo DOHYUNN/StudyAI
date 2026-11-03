@@ -1,7 +1,7 @@
 export const PLAN_VERSION=1;
 const LAYOUT_VERSION=2;
 export const courseKey=(catalog,course)=>`${catalog.id}:${course.id}`;
-export function emptyPlan(catalog){return {version:PLAN_VERSION,layoutVersion:LAYOUT_VERSION,catalogId:catalog.id,items:[],edges:[]}}
+export function emptyPlan(catalog){return {version:PLAN_VERSION,layoutVersion:LAYOUT_VERSION,catalogId:catalog.id,completedCourseIds:[],items:[],edges:[]}}
 const text=(v,max=200)=>typeof v==='string'?v.trim().slice(0,max):'';
 const finite=v=>typeof v==='number'&&Number.isFinite(v);
 const page=v=>Number.isInteger(v)&&v>0&&v<=1000?v:null;
@@ -27,6 +27,7 @@ export function validateCatalog(value){
 export function validatePlan(value,catalog){
  if(value?.version!==PLAN_VERSION||value.catalogId!==catalog.id||!Array.isArray(value.items)||value.items.length>1000)throw new Error('현재 교육과정과 맞는 로드맵 파일을 선택해 주세요.');
  const known=new Set(catalog.courses.map(c=>c.id)),seen=new Set();
+ const completedCourseIds=[...new Set((Array.isArray(value.completedCourseIds)?value.completedCourseIds:[]).filter(id=>known.has(id)))];
  const items=value.items.map(i=>{
   if(!i||!known.has(i.courseId)||seen.has(i.courseId)||!Number.isInteger(i.semester)||i.semester<1||i.semester>8)throw new Error('과목 또는 학기 정보가 올바르지 않습니다.');
   seen.add(i.courseId);let position=i.position&&finite(i.position.x)&&finite(i.position.y)&&Math.abs(i.position.x)<100000&&Math.abs(i.position.y)<100000?{x:i.position.x,y:i.position.y}:null;
@@ -35,7 +36,7 @@ export function validatePlan(value,catalog){
  });
  const official=catalog.relations.filter(r=>seen.has(r.source)&&seen.has(r.target));
  const edges=[];for(const e of (Array.isArray(value.edges)?value.edges:[]).slice(0,3000))if(e&&seen.has(e.source)&&seen.has(e.target)&&canConnect([...official,...edges],e.source,e.target))edges.push({source:e.source,target:e.target});
- return {version:PLAN_VERSION,layoutVersion:LAYOUT_VERSION,catalogId:catalog.id,items,edges};
+ return {version:PLAN_VERSION,layoutVersion:LAYOUT_VERSION,catalogId:catalog.id,completedCourseIds,items,edges};
 }
 export function canConnect(edges,source,target){
  if(!source||!target||source===target||edges.some(e=>e.source===source&&e.target===target))return false;
@@ -63,6 +64,7 @@ export function planWarnings(plan,catalog){
  const byId=new Map(plan.items.map(i=>[i.courseId,i])),lookup=new Map(catalog.courses.map(c=>[c.id,c])),warnings=[];
  const groups=catalog.prerequisiteGroups||catalog.relations.filter(r=>r.kind==='required').map((r,i)=>({id:`legacy-${i}`,target:r.target,options:[r.source]}));
  for(const g of groups){const target=byId.get(g.target);if(!target)continue;
+  if(g.options.some(id=>plan.completedCourseIds?.includes(id)))continue;
   const options=g.options.map(id=>byId.get(id)).filter(Boolean);
   if(options.some(i=>i.status==='done'||i.semester<target.semester))continue;
   const names=g.options.map(id=>lookup.get(id)?.name||id).join(' 또는 '),prefix=`${lookup.get(g.target)?.name||g.target}: `;
@@ -71,7 +73,7 @@ export function planWarnings(plan,catalog){
  for(const item of plan.items){const c=lookup.get(item.courseId),term=item.semester%2?1:2;if(c?.offeredSemesters?.length&&!c.offeredSemesters.includes(term))warnings.push(`${c.name}: 편성표는 ${c.offeredSemesters.join('·')}학기 개설입니다. 실제 시간표를 확인해 주세요.`)}
  return [...new Set(warnings)];
 }
-export function planTotals(plan,catalog){const lookup=new Map(catalog.courses.map(c=>[c.id,c])),credits=i=>lookup.get(i.courseId)?.credits||0;return {credits:plan.items.reduce((n,i)=>n+credits(i),0),doneCredits:plan.items.filter(i=>i.status==='done').reduce((n,i)=>n+credits(i),0),unknownCredits:plan.items.filter(i=>lookup.get(i.courseId)?.credits===null).length}}
+export function planTotals(plan,catalog){const lookup=new Map(catalog.courses.map(c=>[c.id,c])),credits=i=>lookup.get(i.courseId)?.credits||0;return {credits:plan.items.reduce((n,i)=>n+credits(i),0),doneCredits:[...new Set([...(plan.completedCourseIds||[]),...plan.items.filter(i=>i.status==='done').map(i=>i.courseId)])].reduce((n,id)=>n+(lookup.get(id)?.credits||0),0),unknownCredits:plan.items.filter(i=>lookup.get(i.courseId)?.credits===null).length}}
 export function storageKey(catalog,userId){return `studyai-roadmap-v1:${userId||'guest'}:${catalog.id}`}
 export function loadPlan(catalog,userId,storage=globalThis.localStorage){try{const raw=storage.getItem(storageKey(catalog,userId));return raw?validatePlan(JSON.parse(raw),catalog):emptyPlan(catalog)}catch{return emptyPlan(catalog)}}
 export function savePlan(plan,catalog,userId,storage=globalThis.localStorage){try{storage.setItem(storageKey(catalog,userId),JSON.stringify(validatePlan(plan,catalog)));return true}catch{return false}}

@@ -1,5 +1,5 @@
 import {gatewayKey} from './chatkhu.js';
-// Only metadata is requested here. Generation happens exclusively in /api/chat.
+// Only metadata is requested here. Generation happens only in the explicit chat and roadmap POST handlers.
 let cached;
 export class ModelLookupError extends Error {constructor(message,status=null,code=null){super(message);this.status=status;this.code=code}}
 export async function availableModels(env){
