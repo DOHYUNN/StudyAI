@@ -8,3 +8,5 @@ dist/
 !.dev.vars.example
 .wrangler/
 .DS_Store
+
+shared/roadmap-catalog.generated.js

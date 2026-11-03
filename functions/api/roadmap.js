@@ -1,4 +1,4 @@
-import rawCatalog from '../../src/roadmap/catalog.json' with {type:'json'};
+import rawCatalog from '../../shared/roadmap-catalog.generated.js';
 import {validateCatalog} from '../../src/roadmap/model.js';
 import {validateRoadmapProfile,validateRoadmapSuggestion,roadmapChecks,roadmapPrompt,MAX_AI_COURSES} from '../../shared/ai-roadmap.js';
 import {chatkhuReady,authMode,gatewayKey} from '../../shared/chatkhu.js';
