@@ -11,9 +11,14 @@ export async function onRequestGet({request,env}){
 }
 
 export async function onRequestPost({request,env}){
- if(authMode(env)!=='turnstile'||!env.CHATKHU_API_KEY||env.CHATKHU_CREDITS_CONFIRMED!=='true')return json({error:'AI 연결 설정을 확인해 주세요.'},503);
+ if(authMode(env)!=='turnstile'||!(env.GEMINI_API_KEY&&env.GEMINI_FREE_TIER_CONFIRMED==='true')&&(!env.CHATKHU_API_KEY||env.CHATKHU_CREDITS_CONFIRMED!=='true'))return json({error:'AI 연결 설정을 확인해 주세요.'},503);
  try{
   if(!await verifyTurnstile(request,env))return json({error:'사용자 확인을 완료해 주세요.'},401);
+  if(env.GEMINI_API_KEY&&env.GEMINI_FREE_TIER_CONFIRMED==='true'){
+   const response=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite',{headers:{'x-goog-api-key':env.GEMINI_API_KEY.trim()}});
+   if(!response.ok)return json({error:`Gemini 연결 확인 실패 (HTTP ${response.status}).`},502);
+   return json({connected:true,model:'gemini-2.5-flash-lite'});
+  }
   const models=await availableModels(env);
   const model=env.CHATKHU_MODEL||selectModel(models);
   if(!models.some(m=>m.id===model))return json({error:'지정한 모델을 이 키로 사용할 수 없습니다.'},502);
