@@ -10,7 +10,13 @@ export async function availableModels(env){
    throw new ModelLookupError('ChatKHU 앞단의 Cloudflare가 모델 목록 요청을 차단했습니다 (1010).',403,'edge-block');
   }
   if(result.headers.get('Content-Type')?.includes('application/json')){
-   throw new ModelLookupError('ChatKHU Gateway가 모델 목록 접근을 거부했습니다 (HTTP 403). 학교 계정의 API Gateway 권한을 확인해 주세요.',403,'gateway-forbidden');
+   let reason='상세 사유 없음';
+   try {
+    const error=JSON.parse(body);
+    const message=error.detail?.message||error.error?.message||error.message||error.detail;
+    if(typeof message==='string')reason=message.split(gatewayKey(env)).join('[redacted]').replace(/(?:baze|sk)[-_a-zA-Z0-9]{12,}/g,'[redacted]').replace(/[\w.+-]+@[\w.-]+/g,'[redacted]').slice(0,400);
+   } catch {}
+   throw new ModelLookupError(`ChatKHU Gateway 접근 거부 (HTTP 403): ${reason}`,403,'gateway-forbidden');
   }
   throw new ModelLookupError('ChatKHU 모델 목록이 차단되었습니다 (HTTP 403, Gateway JSON 응답 없음).',403,'non-json-forbidden');
  }
