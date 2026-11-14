@@ -4,6 +4,16 @@ let cached;
 export class ModelLookupError extends Error {constructor(message,status=null,code=null){super(message);this.status=status;this.code=code}}
 export async function availableModels(env){
  const result=await fetch('https://factchat-cloud.mindlogic.ai/v1/gateway/models/?type=llm',{headers:{Authorization:`Bearer ${gatewayKey(env)}`,'User-Agent':'StudyAI/1.0','Accept':'application/json'},signal:AbortSignal.timeout(10000)});
+ if(result.status===403){
+  const body=await result.text();
+  if(/^error code: 1010$/i.test(body.trim())){
+   throw new ModelLookupError('ChatKHU 앞단의 Cloudflare가 모델 목록 요청을 차단했습니다 (1010).',403,'edge-block');
+  }
+  if(result.headers.get('Content-Type')?.includes('application/json')){
+   throw new ModelLookupError('ChatKHU Gateway가 모델 목록 접근을 거부했습니다 (HTTP 403). 학교 계정의 API Gateway 권한을 확인해 주세요.',403,'gateway-forbidden');
+  }
+  throw new ModelLookupError('ChatKHU 모델 목록이 차단되었습니다 (HTTP 403, Gateway JSON 응답 없음).',403,'non-json-forbidden');
+ }
  if(!result.ok)throw new ModelLookupError(`ChatKHU 모델 목록 조회 오류 (HTTP ${result.status}). API 키와 Gateway 이용 권한을 확인해 주세요.`,result.status,'gateway-http');
  const data=await result.json();
  if(Array.isArray(data.data))return data.data.filter(m=>(!m.type||m.type==='llm')&&/^gemini-[a-zA-Z0-9._-]+$/.test(m.id||'')).map(m=>({id:m.id,name:m.display_name||m.id}));
