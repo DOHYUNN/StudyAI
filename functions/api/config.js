@@ -4,7 +4,7 @@ import {hasAccess} from '../../shared/access.js';
 export async function onRequestGet({env,request}) {
  const mode=authMode(env);
  const authenticated=mode==='access-code'&&!!request&&await hasAccess(request,env.STUDYAI_ACCESS_CODE);
- let enabled=chatkhuReady(env),model=enabled?'gemini-2.5-flash-lite':null,error=null;
+ let enabled=chatkhuReady(env),model=enabled?'gemini-3.5-flash-lite':null,error=null;
  if(enabled&&authenticated){try{model=await resolveModel(env)}catch{enabled=false;error='Gemini 모델 연결을 확인해 주세요.'}}
  return Response.json({enabled,provider:'gemini',authMode:mode,authenticated,...(mode==='turnstile'?{siteKey:env.TURNSTILE_SITE_KEY}:{}),...(model?{model}:{}),...(error?{error}:{})},{headers:{'Cache-Control':'no-store'}});
 }

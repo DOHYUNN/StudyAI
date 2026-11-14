@@ -28,7 +28,7 @@ export async function availableModels(env){
  throw new ModelLookupError('ChatKHU 모델 목록의 응답 형식을 확인해야 합니다.',result.status,'model-format');
 }
 export async function resolveModel(env){
- if(env.GEMINI_API_KEY && env.GEMINI_FREE_TIER_CONFIRMED==='true')return 'gemini-2.5-flash-lite';
+ if(env.GEMINI_API_KEY && env.GEMINI_FREE_TIER_CONFIRMED==='true')return 'gemini-3.5-flash-lite';
  if(env.CHATKHU_MODEL)return env.CHATKHU_MODEL;
  if(cached?.apiKey===env.CHATKHU_API_KEY&&cached.expires>Date.now())return cached.model;
  const models=await availableModels(env);
