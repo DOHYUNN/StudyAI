@@ -6,11 +6,7 @@ export function authMode(env) {
  return null;
 }
 export function chatkhuReady(env) {
- if(env.GEMINI_API_KEY && env.GEMINI_FREE_TIER_CONFIRMED==='true')return !!authMode(env);
- return env.CHATKHU_CREDITS_CONFIRMED === 'true'
-  && typeof env.CHATKHU_API_KEY === 'string' && !!env.CHATKHU_API_KEY.trim()
-  && (env.CHATKHU_MODEL===undefined || env.CHATKHU_MODEL==='' || typeof env.CHATKHU_MODEL === 'string' && /^gemini-[a-zA-Z0-9._-]+$/.test(env.CHATKHU_MODEL))
-  && !!authMode(env);
+ return typeof env.GEMINI_API_KEY==='string' && !!env.GEMINI_API_KEY.trim() && env.GEMINI_FREE_TIER_CONFIRMED==='true' && !!authMode(env);
 }
 
 export function gatewayKey(env){
