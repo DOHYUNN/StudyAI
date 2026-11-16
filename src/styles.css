@@ -32,3 +32,27 @@
 .chat-mode-picker{margin:0 0 12px}.chat-mode-hint{display:block;font-size:11px;color:#74856e;margin-bottom:8px}.chat-mode-buttons{display:flex;flex-wrap:wrap;gap:8px}.chat-mode-buttons button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #ccd9c6;border-radius:22px;background:#ffffffb0;color:#526d47;font-size:12px}.chat-mode-buttons button:hover{background:#e6efdf}.chat-mode-buttons button[aria-pressed="true"]{background:#24644f;color:#fff;border-color:#24644f}.sent-modes{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;white-space:normal}.sent-modes span{font-size:10px;padding:3px 8px;border-radius:12px;background:#ffffff99;color:#36634c}@media(max-width:400px){.chat-mode-buttons{gap:6px}.chat-mode-buttons button{padding:8px 10px;font-size:11px}}
 
 .math-message{min-width:0;max-width:100%;white-space:pre-wrap;overflow-wrap:anywhere}.math-message .katex{font-size:1.12em;white-space:normal;overflow-wrap:normal}.math-message .katex-display{max-width:100%;overflow-x:auto;overflow-y:hidden;padding:10px 2px;margin:12px 0;white-space:normal}.math-message .katex-display>.katex{white-space:nowrap}.math-message .katex-error{white-space:pre-wrap;overflow-wrap:anywhere}
+
+/* Give the conversation more of the viewport once chatting starts. */
+.chat-main.has-messages{max-width:1100px}
+.has-messages .chat-workspace{min-height:0}
+.has-messages .chat-toolbar{height:38px}
+.has-messages .chat-messages{padding:18px 10px 12px 0;overscroll-behavior:contain}
+.has-messages .composer-area{padding-bottom:max(8px,env(safe-area-inset-bottom))}
+.has-messages .chat-mode-picker{margin-bottom:7px}
+.has-messages .chat-mode-hint{display:none}
+.has-messages .chat-mode-buttons button{min-height:36px;padding:7px 12px}
+.has-messages .composer{padding:10px 16px 8px;border-radius:15px}
+.has-messages .composer textarea{display:block;height:44px;min-height:44px;max-height:100px}
+.has-messages .attachment-help{display:none}
+.has-messages .composer:focus-within .attachment-help{display:block;margin-top:4px}
+.has-messages .chat-disclaimer{margin-top:5px}
+.has-messages .chat-links{display:none}
+@media(max-width:650px){
+ .chat-main.has-messages{padding:0 12px}
+ .has-messages .chat-toolbar{height:32px}
+ .has-messages .chat-messages{padding:12px 4px 8px 0}
+ .has-messages .composer{padding:8px 12px 6px}
+ .has-messages .composer textarea{height:40px;min-height:40px;max-height:80px;font-size:16px}
+ .has-messages .chat-mode-buttons button{min-height:36px}
+}
