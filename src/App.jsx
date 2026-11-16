@@ -10,6 +10,7 @@ import {prepareFiles} from './attachments';
 import {formatSize} from '../shared/attachments';
 const navs=[['coach','채팅',MessageCircle],['learning','내 학습',BookOpen],['roadmap','로드맵',Route]];
 const RoadmapPlanner=lazy(()=>import('./RoadmapPlanner'));
+const chatModes=[['concept','개념 설명',BookOpen],['plan','학습 계획',Route],['material','자료 질문',Paperclip]];
 const initial=readState();
 function FilePreview({file,onClose}){
  const [url,setUrl]=useState('');
@@ -19,6 +20,7 @@ function FilePreview({file,onClose}){
 }
 function Icon({name:Comp,...props}) {return <Comp size={20} strokeWidth={1.7} {...props}/>}
 export default function App(){
+ const [selectedModes,setSelectedModes]=useState([]);
  const [roadmapVisited,setRoadmapVisited]=useState(false);
  const [page,setPage]=useState('coach'),[selected]=useState('general');
  const [progress,setProgress]=useState(initial.progress||{}),[goal,setGoal]=useState(initial.goal||'매일 20분 공부하기');
@@ -51,7 +53,7 @@ export default function App(){
  function newConversation(){
   conversationVersion.current+=1;chatRequest.current?.abort();chatRequest.current=null;
   sending.current=false;fileReadingRef.current=false;fileSessions.current.clear();
-  setMessages([]);setLevel({});setInput('');setAttachments([]);setPreviewFile(null);setBusy(false);setFileReading(false);setNotice('');setModal(false);
+  setMessages([]);setSelectedModes([]);setLevel({});setInput('');setAttachments([]);setPreviewFile(null);setBusy(false);setFileReading(false);setNotice('');setModal(false);
   if(fileInput.current)fileInput.current.value='';
   setVerificationToken('');setVerificationReset(n=>n+1);setPage('coach');
   window.scrollTo(0,0);
@@ -77,16 +79,18 @@ export default function App(){
   const version=conversationVersion.current,controller=new AbortController();chatRequest.current=controller;
   const turnstileToken=verificationToken;
   const topic=subject,history=chat.slice(-8),files=attachments;
-  const question=text.trim()||'첨부 자료의 핵심 내용을 설명하고, 학습 순서를 제안해 줘.';
+  const question=text.trim()||'첨부 자료의 핵심 내용을 설명해 줘.';
+  const modes=chatModes.filter(([id])=>selectedModes.includes(id)).map(([,label])=>label);
+  const requestText=modes.length?`요청 방식: ${modes.join(', ')}. 선택한 방식을 모두 반영해 답변해 주세요.\n\n${question}`:question;
   sending.current=true;setBusy(true);setInput('');setAttachments([]);go('coach');
-  const user={id:crypto.randomUUID(),role:'user',text:question,subject:topic.id,attachments:files.map(({id,name,size,mimeType})=>({id,name,size,mimeType}))};
+  const user={id:crypto.randomUUID(),role:'user',text:question,requestText,modes,subject:topic.id,attachments:files.map(({id,name,size,mimeType})=>({id,name,size,mimeType}))};
   const previousFiles=fileSessions.current.get(topic.id);
   if(files.length)fileSessions.current.set(topic.id,{messageId:user.id,files});
   setMessages(m=>[...m,user].slice(-100));
   try{let answer;
    if(live){
     const currentFiles=fileSessions.current.get(topic.id);
-    const payload=[...history,user].map(m=>({role:m.role,text:m.text,...(currentFiles?.messageId===m.id?{attachments:currentFiles.files.map(({name,size,mimeType,data})=>({name,size,mimeType,data}))}:{})}));
+    const payload=[...history,user].map(m=>({role:m.role,text:m.requestText||m.text,...(currentFiles?.messageId===m.id?{attachments:currentFiles.files.map(({name,size,mimeType,data})=>({name,size,mimeType,data}))}:{})}));
     const auth=connection.authMode==='supabase'?await session():null;const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json',...(auth?{Authorization:`Bearer ${auth.access_token}`}:{ }),...(connection.authMode==='turnstile'?{'X-StudyAI-Turnstile':turnstileToken}:{})},body:JSON.stringify({subject:topic.name,level:confirmed||null,messages:payload}),signal:AbortSignal.any([controller.signal,AbortSignal.timeout(45000)])});
     const data=await res.json();if(!res.ok){if(res.status===401)await refreshConnection();throw new Error(data.error||'답변을 받지 못했어요. 잠시 후 다시 시도해 주세요.')}answer=data.reply;
    } else {
@@ -120,9 +124,8 @@ export default function App(){
  {page!=='coach'&&<div className="page-heading"><h1>{page==='learning'?'내 학습':page==='roadmap'?'전공 로드맵':'설정'}</h1></div>}
  {page==='coach'&&<section className="chat-workspace" aria-label="학습 채팅">
   <div className="chat-toolbar"><button className="text-button" onClick={()=>go('roadmap')}><Route size={16}/>로드맵 보기<ArrowUpRight size={14}/></button></div>
-  {chat.length===0?<div className="chat-intro"><span className="intro-icon"><Sparkles size={30}/></span><h1>무엇을 공부할까요?</h1><p>전공 개념 질문부터 자료 분석, 학습 계획까지.</p><div className="public-try-actions"><span>로그인 없이 둘러볼 수 있습니다.</span><button className="secondary" onClick={showChatExample}>대화 예시 보기</button><button className="secondary" onClick={()=>go('roadmap')}>로드맵 체험</button></div></div>:<div className="chat-messages" role="log" aria-label="대화 내용" aria-live="polite">{chat.map(m=><div key={m.id} className={`message ${m.role}`}><span className="message-label">{m.role==='user'?'나':<><Sparkles size={15}/> StudyAI</>}</span><div>{m.attachments?.length>0&&<div className="sent-attachments">{m.attachments.map(f=>{const local=fileSessions.current.get(m.subject)?.files.find(x=>x.id===f.id);return <button key={f.id} type="button" className="sent-file" disabled={!local} onClick={()=>setPreviewFile(local)}><FileText size={17}/><span>{f.name}<small>{formatSize(f.size)} · {local?'파일 보기':'원본 재첨부 필요'}</small></span></button>})}</div>}{m.text}</div></div>)}{!level[selected]&&<div className="level-confirm"><p>현재 이해도</p>{['처음 배워요','기초는 알아요','문제에 적용하고 싶어요'].map(v=><button key={v} onClick={()=>{setLevel(l=>({...l,[selected]:v}));send(`현재 수준: ${v}. 이 수준에 맞게 학습 코칭을 해줘.`,v)}} disabled={busy||fileReading}>{v}</button>)}</div>}{busy&&<div className="thinking"><span/>답변 작성 중…</div>}<div ref={end}/></div>}
-  <div className="composer-area">{connection.enabled&&connection.authMode==='turnstile'&&<ChatVerification siteKey={connection.siteKey} reset={verificationReset} onToken={setVerificationToken}/>}{connection.authMode==='access-code'&&!connection.authenticated&&<form className="access-form" onSubmit={unlock}><label htmlFor="chat-access">AI 채팅 접속 암호</label><div><input id="chat-access" type="password" autoComplete="current-password" value={accessCode} onChange={e=>setAccessCode(e.target.value)} maxLength={128} required placeholder="관리자에게 받은 접속 암호"/><button className="primary" disabled={accessBusy||!accessCode}>{accessBusy?'확인 중…':'접속'}</button></div><small>접속 암호입니다. Gemini API 키를 입력하지 마세요.</small></form>}{Composer()}<p className="chat-disclaimer">{live?'AI 답변은 부정확할 수 있습니다. 중요한 내용은 교재와 확인하세요.':connection.enabled?'접속 암호 입력 후 실제 AI 채팅을 사용할 수 있습니다.':'연결 설정 대기 · 현재 예시 답변만 제공하며 첨부 파일은 분석하지 않습니다.'}</p></div>
-  {chat.length===0&&<div className="quick-actions"><button disabled={busy||fileReading} onClick={()=>send('공부하고 싶은 개념을 쉽게 설명해 줘')}><BookOpen size={19}/><span>개념 설명<small>원하는 주제 질문하기</small></span><ArrowUpRight size={16}/></button><button disabled={busy||fileReading} onClick={()=>send('학습 계획을 세우는 방법을 알려줘')}><Route size={19}/><span>학습 계획<small>단계별 공부 순서</small></span><ArrowUpRight size={16}/></button><button disabled={busy||fileReading} onClick={()=>fileInput.current?.click()}><Paperclip size={19}/><span>자료 질문<small>강의 PDF · 문제 사진</small></span><ArrowUpRight size={16}/></button></div>}
+  {chat.length===0?<div className="chat-intro"><span className="intro-icon"><Sparkles size={30}/></span><h1>무엇을 공부할까요?</h1><p>전공 개념 질문부터 자료 분석, 학습 계획까지.</p><div className="public-try-actions"><span>로그인 없이 둘러볼 수 있습니다.</span><button className="secondary" onClick={showChatExample}>대화 예시 보기</button><button className="secondary" onClick={()=>go('roadmap')}>로드맵 체험</button></div></div>:<div className="chat-messages" role="log" aria-label="대화 내용" aria-live="polite">{chat.map(m=><div key={m.id} className={`message ${m.role}`}><span className="message-label">{m.role==='user'?'나':<><Sparkles size={15}/> StudyAI</>}</span><div>{m.attachments?.length>0&&<div className="sent-attachments">{m.attachments.map(f=>{const local=fileSessions.current.get(m.subject)?.files.find(x=>x.id===f.id);return <button key={f.id} type="button" className="sent-file" disabled={!local} onClick={()=>setPreviewFile(local)}><FileText size={17}/><span>{f.name}<small>{formatSize(f.size)} · {local?'파일 보기':'원본 재첨부 필요'}</small></span></button>})}</div>}{m.modes?.length>0&&<div className="sent-modes">{m.modes.map(mode=><span key={mode}>{mode}</span>)}</div>}{m.text}</div></div>)}{!level[selected]&&<div className="level-confirm"><p>현재 이해도</p>{['처음 배워요','기초는 알아요','문제에 적용하고 싶어요'].map(v=><button key={v} onClick={()=>{setLevel(l=>({...l,[selected]:v}));send(`현재 수준: ${v}. 이 수준에 맞게 학습 코칭을 해줘.`,v)}} disabled={busy||fileReading}>{v}</button>)}</div>}{busy&&<div className="thinking"><span/>답변 작성 중…</div>}<div ref={end}/></div>}
+  <div className="composer-area">{connection.enabled&&connection.authMode==='turnstile'&&<ChatVerification siteKey={connection.siteKey} reset={verificationReset} onToken={setVerificationToken}/>}{connection.authMode==='access-code'&&!connection.authenticated&&<form className="access-form" onSubmit={unlock}><label htmlFor="chat-access">AI 채팅 접속 암호</label><div><input id="chat-access" type="password" autoComplete="current-password" value={accessCode} onChange={e=>setAccessCode(e.target.value)} maxLength={128} required placeholder="관리자에게 받은 접속 암호"/><button className="primary" disabled={accessBusy||!accessCode}>{accessBusy?'확인 중…':'접속'}</button></div><small>접속 암호입니다. Gemini API 키를 입력하지 마세요.</small></form>}<div className="chat-mode-picker" role="group" aria-label="답변 방식 선택, 복수 선택 가능"><span className="chat-mode-hint">답변 방식 · 복수 선택 가능</span><div className="chat-mode-buttons">{chatModes.map(([id,label,I])=><button key={id} type="button" aria-pressed={selectedModes.includes(id)} disabled={busy||fileReading} onClick={()=>setSelectedModes(m=>m.includes(id)?m.filter(v=>v!==id):[...m,id])}><I size={16}/>{label}{selectedModes.includes(id)&&<Check size={14}/>}</button>)}</div></div>{Composer()}<p className="chat-disclaimer">{live?'AI 답변은 부정확할 수 있습니다. 중요한 내용은 교재와 확인하세요.':connection.enabled?'접속 암호 입력 후 실제 AI 채팅을 사용할 수 있습니다.':'연결 설정 대기 · 현재 예시 답변만 제공하며 첨부 파일은 분석하지 않습니다.'}</p></div>
   {chat.length>0&&<div className="chat-links"><button className="text-button" onClick={()=>go('roadmap')}><Route size={15}/>학습 로드맵</button></div>}
  </section>}
  <div hidden={page!=='learning'}><LearningPanel active={page==='learning'} resetKey={conversationVersion.current}/></div>
