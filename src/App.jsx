@@ -10,7 +10,7 @@ import {prepareFiles} from './attachments';
 import {formatSize} from '../shared/attachments';
 const navs=[['coach','채팅',MessageCircle],['learning','내 학습',BookOpen],['roadmap','로드맵',Route]];
 const RoadmapPlanner=lazy(()=>import('./RoadmapPlanner'));
-const chatModes=[['concept','개념 설명',BookOpen],['plan','학습 계획',Route],['material','자료 질문',Paperclip]];
+const chatModes=[['concept','개념 설명',BookOpen],['plan','학습 계획',Route]];
 const initial=readState();
 function FilePreview({file,onClose}){
  const [url,setUrl]=useState('');
@@ -81,7 +81,8 @@ export default function App(){
   const topic=subject,history=chat.slice(-8),files=attachments;
   const question=text.trim()||'첨부 자료의 핵심 내용을 설명해 줘.';
   const modes=chatModes.filter(([id])=>selectedModes.includes(id)).map(([,label])=>label);
-  const requestText=modes.length?`요청 방식: ${modes.join(', ')}. 선택한 방식을 모두 반영해 답변해 주세요.\n\n${question}`:question;
+  const modeInstruction=selectedModes.includes('concept')&&selectedModes.includes('plan')?'먼저 개념을 설명하고, 그다음 학습 계획을 작성해 주세요.':selectedModes.includes('concept')?'개념만 설명해 주세요. 학습 계획은 작성하지 마세요.':selectedModes.includes('plan')?'학습 계획만 작성해 주세요. 별도의 개념 설명은 작성하지 마세요.':'';
+  const requestText=modeInstruction?`${modeInstruction}\n\n${question}`:question;
   sending.current=true;setBusy(true);setInput('');setAttachments([]);go('coach');
   const user={id:crypto.randomUUID(),role:'user',text:question,requestText,modes,subject:topic.id,attachments:files.map(({id,name,size,mimeType})=>({id,name,size,mimeType}))};
   const previousFiles=fileSessions.current.get(topic.id);
@@ -91,7 +92,7 @@ export default function App(){
    if(live){
     const currentFiles=fileSessions.current.get(topic.id);
     const payload=[...history,user].map(m=>({role:m.role,text:m.requestText||m.text,...(currentFiles?.messageId===m.id?{attachments:currentFiles.files.map(({name,size,mimeType,data})=>({name,size,mimeType,data}))}:{})}));
-    const auth=connection.authMode==='supabase'?await session():null;const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json',...(auth?{Authorization:`Bearer ${auth.access_token}`}:{ }),...(connection.authMode==='turnstile'?{'X-StudyAI-Turnstile':turnstileToken}:{})},body:JSON.stringify({subject:topic.name,level:confirmed||null,messages:payload}),signal:AbortSignal.any([controller.signal,AbortSignal.timeout(45000)])});
+    const auth=connection.authMode==='supabase'?await session():null;const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json',...(auth?{Authorization:`Bearer ${auth.access_token}`}:{ }),...(connection.authMode==='turnstile'?{'X-StudyAI-Turnstile':turnstileToken}:{})},body:JSON.stringify({subject:topic.name,level:confirmed||null,modes:selectedModes,messages:payload}),signal:AbortSignal.any([controller.signal,AbortSignal.timeout(45000)])});
     const data=await res.json();if(!res.ok){if(res.status===401)await refreshConnection();throw new Error(data.error||'답변을 받지 못했어요. 잠시 후 다시 시도해 주세요.')}answer=data.reply;
    } else {
     await new Promise(r=>setTimeout(r,650));
